@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
-import FilesList from './FilesList';
-import UploadFile from './UploadFile';
+import FilesList from './Sidebar/FilesList';
+import UploadFile from './Sidebar/UploadFile';
 
 const Sidebar = ({ onFileClick }) => {
   const [files, setFiles] = useState([]);
