@@ -1,7 +1,7 @@
 .main-content {
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 0;
   padding: 20px;

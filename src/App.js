@@ -4,17 +4,6 @@ import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
 import Header from './components/Header';
 
-const fakeData = {
-  lines: [
-    
-  ],
-  circles: [
-    { center: { x: 0, y: 0 }, radius: 2 }
-  ],
-  arcs: [
-    
-  ],
-};
 
 const App = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -28,7 +17,7 @@ const App = () => {
       <Header />
       <div className="content">
         <Sidebar onFileClick={handleFileClick} />
-        <MainContent selectedFile={selectedFile} fakeData={fakeData} />
+        <MainContent selectedFile={selectedFile} />
       </div>
     </div>
   );
