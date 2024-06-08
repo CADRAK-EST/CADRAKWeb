@@ -1,0 +1,12 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensure it takes the full height of the parent */
+  width: 25%; /* Adjust the width as needed */
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  overflow-y: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

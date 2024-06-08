@@ -1,0 +1,56 @@
+.files-list {
+  flex-grow: 1; /* Allow it to grow and take up remaining space */
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  font-family: 'Roboto', sans-serif; /* Modern font */
+}
+
+.files-list h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.files-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.file-item {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.file-item:hover {
+  background-color: #e0e0e0;
+}
+
+.no-files {
+  padding: 0.5rem;
+  color: #888;
+}
+
+.select-folder-btn {
+  background-color: #ff7f00; /* Change to orange */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 1rem; /* Add some space above the button */
+}
+
+.select-folder-btn:hover {
+  background-color: #e67300; /* Darker shade of orange for hover effect */
+}
