@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import DXFRender from './DXFRender';
-import CursorCoordinates from './CursorCoordinates';
+import DXFRender from './DXFView/DXFRender';
+import CursorCoordinates from './DXFView/CursorCoordinates';
 import './DXFView.css';
 
 const DXFView = ({ selectedFile, fakeData }) => {

@@ -1,0 +1,53 @@
+:root {
+  --font-family: 'Roboto', sans-serif;
+  --text-color: #333;
+  --background-color: #f5f5f5;
+  --primary-color: #f8f9fa;
+  --secondary-color: #ff7f00;
+  --secondary-color-hover: #e67300;
+  --disabled-color: #ccc;
+  --border-color: #ddd;
+  --border-style: 1px solid #ddd;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --button-border-radius: 4px;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  color: var(--text-color);
+  line-height: 1;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+
+/* Buttons */
+button {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: var(--shadow);
+}
+
+button:hover {
+  background-color: var(--secondary-color-hover);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+button:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+}

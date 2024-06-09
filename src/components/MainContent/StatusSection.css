@@ -1,0 +1,10 @@
+@import '../../global.css';
+
+.status-section {
+  height: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: var(--border-style);
+  padding: 1rem;
+}

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef} from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './DXFRender.css';
@@ -10,6 +10,7 @@ const DXFRender = ({ selectedFile, onCursorMove, fakeData }) => {
   const controlsRef = useRef(null);
   const rendererRef = useRef(null);
   const requestIDRef = useRef(null);
+
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -48,7 +49,7 @@ const DXFRender = ({ selectedFile, onCursorMove, fakeData }) => {
     renderer.domElement.addEventListener('mousemove', handleMouseMove);
 
     // Grid setup
-    const size = 1000;
+    const size = 10000;
     const divisions = 100;
     const gridHelper = new THREE.GridHelper(size, divisions);
     gridHelper.rotation.x = Math.PI / 2;
@@ -97,7 +98,7 @@ const DXFRender = ({ selectedFile, onCursorMove, fakeData }) => {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableRotate = false;
     controls.screenSpacePanning = true;
-    controls.minDistance = 1;
+    controls.minDistance = 10;
     controls.maxDistance = 1000;
     controlsRef.current = controls;
 
