@@ -3,7 +3,7 @@ import './UploadFile.css';
 
 const UploadFile = ({ onFileUpload }) => {
   const [dragging, setDragging] = useState(false);
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -17,43 +17,62 @@ const UploadFile = ({ onFileUpload }) => {
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.name.endsWith('.dxf')) {
-      setFile(droppedFile);
-    }
+    const droppedFiles = Array.from(e.dataTransfer.files)
+      .filter(file => file.name.endsWith('.dxf'));
+
+    setFiles(droppedFiles);
   };
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.name.endsWith('.dxf')) {
-      setFile(selectedFile);
-    }
+    const selectedFiles = Array.from(e.target.files)
+      .filter(file => file.name.endsWith('.dxf'));
+
+    setFiles(selectedFiles);
   };
 
   const handleUpload = () => {
-    if (file) {
-      onFileUpload(file);
-      setFile(null);
-    }
+    const uploadedFiles = [];
+
+    files.forEach(file => {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('http://localhost:5000/upload', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.file_path) {
+            uploadedFiles.push({ name: file.name, path: data.file_path });
+            if (uploadedFiles.length === files.length) {
+              onFileUpload(uploadedFiles);
+            }
+          }
+        })
+        .catch(error => console.error('Error uploading file:', error));
+    });
+
+    setFiles([]);
   };
 
   return (
     <div className="upload-file">
-      <h2>Upload a DXF</h2>
+      <h2>Upload DXF Files</h2>
       <div
         className={`drag-drop-area ${dragging ? 'dragging' : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <p>{file ? file.name : 'Drag & Drop your file here'}</p>
+        <p>{files.length > 0 ? `${files.length} files selected` : 'Drag & Drop your files here'}</p>
       </div>
-      <input type="file" accept=".dxf" onChange={handleFileChange} />
+      <input type="file" accept=".dxf" multiple onChange={handleFileChange} />
       <button
         type="button"
         onClick={handleUpload}
-        disabled={!file}
-        className={file ? 'active' : 'inactive'}
+        disabled={files.length === 0}
+        className={files.length > 0 ? 'active' : 'inactive'}
       >
         Upload
       </button>
