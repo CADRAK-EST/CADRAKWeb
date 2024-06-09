@@ -3,7 +3,7 @@ import DXFRender from './DXFView/DXFRender';
 import CursorCoordinates from './DXFView/CursorCoordinates';
 import './DXFView.css';
 
-const DXFView = ({ selectedFile, fakeData }) => {
+const DXFView = ({ parsedData }) => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
   const handleCursorMove = useCallback((x, y) => {
@@ -12,7 +12,7 @@ const DXFView = ({ selectedFile, fakeData }) => {
 
   return (
     <div className="dxf-view">
-      <DXFRender selectedFile={selectedFile} onCursorMove={handleCursorMove} fakeData={fakeData} />
+      <DXFRender onCursorMove={handleCursorMove} parsedData={parsedData} />
       <CursorCoordinates x={cursorPosition.x} y={cursorPosition.y} />
     </div>
   );

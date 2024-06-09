@@ -1,25 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './MainContent.css';
-import DXFView from './MainContent/DXFView';
 import StatusSection from './MainContent/StatusSection';
+import DXFView from './MainContent/DXFView';
+import useParsedData from '../Data';
 
-const fakeData = {
-  lines: [
-    
-  ],
-  circles: [
-    
-  ],
-  arcs: [
-    
-  ],
+const MainContent = ({ selectedFile }) => {
+  const [parsedData, fetchParsedData] = useParsedData();
+
+  useEffect(() => {
+    if (selectedFile) {
+      fetchParsedData(selectedFile.path);
+    }
+  }, [selectedFile, fetchParsedData]);
+
+  return (
+    <div className="main-content">
+      <DXFView parsedData={parsedData} />
+      <StatusSection selectedFile={selectedFile} />
+    </div>
+  );
 };
-
-const MainContent = ({ selectedFile }) => (
-  <div className="main-content">
-    <DXFView selectedFile={selectedFile} fakeData={fakeData} />
-    <StatusSection selectedFile={selectedFile} />
-  </div>
-);
 
 export default MainContent;
