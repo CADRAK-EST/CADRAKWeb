@@ -35,7 +35,14 @@ const DXFRender = ({ selectedFile, onCursorMove, fakeData }) => {
       const rect = renderer.domElement.getBoundingClientRect();
       const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      onCursorMove(x, y);
+      
+      // Convert to world coordinates
+      const vector = new THREE.Vector3(x, y, 0.5).unproject(camera);
+      const dir = vector.sub(camera.position).normalize();
+      const distance = -camera.position.z / dir.z;
+      const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+      
+      onCursorMove(pos.x, pos.y);
     };
 
     renderer.domElement.addEventListener('mousemove', handleMouseMove);

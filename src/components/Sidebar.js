@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Sidebar.css';
 import FilesList from './Sidebar/FilesList';
 import UploadFile from './Sidebar/UploadFile';

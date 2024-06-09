@@ -1,12 +1,13 @@
+/* Upload File Styles */
 .upload-file {
-  flex-shrink: 0; /* Prevent it from shrinking */
+  flex-shrink: 0;
   padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-top: 1rem;
-  font-family: 'Roboto', sans-serif; /* Modern font */
+  font-family: 'Roboto', sans-serif;
 }
 
 .upload-file h2 {
@@ -41,7 +42,7 @@ input[type="file"] {
 }
 
 button {
-  background-color: #ff7f00; /* Change to orange */
+  background-color: #ff7f00;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -56,5 +57,5 @@ button.inactive {
 }
 
 button.active:hover {
-  background-color: #e67300; /* Darker shade of orange for hover effect */
+  background-color: #e67300;
 }

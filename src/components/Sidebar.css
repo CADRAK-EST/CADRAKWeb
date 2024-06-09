@@ -1,8 +1,8 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Ensure it takes the full height of the parent */
-  width: 25%; /* Adjust the width as needed */
+  height: 100%;
+  width: 20%;
   border-right: 1px solid #ddd;
   padding: 1rem;
   background-color: #ffffff;
