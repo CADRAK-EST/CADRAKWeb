@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import './App.css';
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
 import Header from './components/Header';
-
+import './App.css';
 
 const App = () => {
   const [selectedFile, setSelectedFile] = useState(null);

@@ -7,7 +7,6 @@ const FilesList = ({ files, onFileClick, onFolderSelect }) => {
   const handleFolderChange = (event) => {
     console.log(event.target.files); // Log all files received
     const folderFiles = Array.from(event.target.files).filter(file => file.name.endsWith('.dxf'));
-    console.log(folderFiles); // Log filtered files
     onFolderSelect(folderFiles);
   };
 

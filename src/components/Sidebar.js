@@ -16,14 +16,8 @@ const Sidebar = ({ onFileClick }) => {
       !files.some(existingFile => existingFile.name === newFile.name)
     );
 
-    // Update the state with the new list (concatenated with existing files)
     setFiles([...files, ...newFiles]);
-    console.log(files); // Log the updated files array to see if it's correct
   };
-
-  useEffect(() => {
-    console.log(files); // This will log the updated state
-  }, [files]);
 
   return (
     <div className="sidebar">
