@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import './MainContent.css';
-import StatusSection from './MainContent/StatusSection';
-import DXFView from './MainContent/DXFView';
-import useParsedData from '../Data';
+import StatusSection from './StatusSection/StatusSection';
+import DXFView from './DXFView/DXFView';
+import useParsedData from '../../Data';
 
 const MainContent = ({ selectedFile }) => {
   const [parsedData, fetchParsedData] = useParsedData();

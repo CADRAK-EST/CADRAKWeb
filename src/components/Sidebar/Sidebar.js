@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './Sidebar.css';
-import FilesList from './Sidebar/FilesList';
-import UploadFile from './Sidebar/UploadFile';
-import useParsedData from '../Data';
+import FilesList from './FilesList';
+import UploadFile from './UploadFile';
+import useParsedData from '../../Data';
 
 const Sidebar = ({ onFileClick }) => {
   const [files, setFiles] = useState([]);
@@ -20,7 +20,7 @@ const Sidebar = ({ onFileClick }) => {
   return (
     <div className="sidebar">
       <FilesList files={files} onFileClick={handleFileClick} />
-      <UploadFile onFileUpload={handleFileUpload} />
+      <UploadFile onFileUpload={handleFileUpload} setFiles={setFiles} />
     </div>
   );
 };
