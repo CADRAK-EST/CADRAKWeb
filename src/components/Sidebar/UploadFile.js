@@ -24,7 +24,7 @@ const UploadFile = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
-    handleFileChange(e); // Reuse handleFileChange for the drop as well, assuming it can handle the 'dataTransfer.files'
+    handleFileChange(e);
   };
 
   return (
