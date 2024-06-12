@@ -1,48 +1,16 @@
-export const parseLines = async (filePath) => {
-    const response = await fetch('http://localhost:5000/parse/lines', {
+export const parseData = async (filePath) => {
+    const response = await fetch('http://localhost:5000/parse', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ file_path: filePath }),
     });
-  
-    if (!response.ok) {
-      throw new Error('--API.js-- Network response was not ok');
-    }
-  
-    return response.json();
-};
 
-export const parseTexts = async (filePath) => {
-    const response = await fetch('http://localhost:5000/parse/texts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ file_path: filePath }),
-    });
-  
     if (!response.ok) {
       throw new Error('--API.js-- Network response was not ok');
     }
-  
-    return response.json();
-};
 
-export const parseMistakes = async (filePath) => {
-    const response = await fetch('http://localhost:5000/parse/mistakes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ file_path: filePath }),
-    });
-  
-    if (!response.ok) {
-      throw new Error('--API.js-- Network response was not ok');
-    }
-  
     return response.json();
 };
 

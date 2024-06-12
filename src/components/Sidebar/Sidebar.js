@@ -1,26 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setFiles } from '../../slices/fileSlice';
 import './Sidebar.css';
 import FilesList from './FilesList';
 import UploadFile from './UploadFile';
-import useParsedData from '../../Data';
 
 const Sidebar = ({ onFileClick }) => {
-  const [files, setFiles] = useState([]);
-  const [, fetchParsedData] = useParsedData();
+  const files = useSelector((state) => state.file.files);
+  const dispatch = useDispatch();
 
   const handleFileUpload = (newFiles) => {
-    setFiles(prevFiles => [...prevFiles, ...newFiles]);
-  };
-
-  const handleFileClick = (file) => {
-    fetchParsedData(file.path);
-    onFileClick(file);
+    dispatch(setFiles([...files, ...newFiles]));
   };
 
   return (
     <div className="sidebar">
-      <FilesList files={files} onFileClick={handleFileClick} />
-      <UploadFile onFileUpload={handleFileUpload} setFiles={setFiles} />
+      <FilesList files={files} onFileClick={onFileClick} />
+      <UploadFile onFileUpload={handleFileUpload} />
     </div>
   );
 };

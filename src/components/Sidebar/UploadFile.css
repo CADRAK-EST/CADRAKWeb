@@ -38,3 +38,8 @@
 input[type="file"] {
   display: none;
 }
+
+.upload-btn {
+  padding: 10px 20px; 
+  font-size: 24px;
+}

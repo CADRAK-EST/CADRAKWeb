@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { setSelectedFile } from './slices/fileSlice';
 import './App.css';
-import Sidebar from './components/Sidebar';
-import MainContent from './components/MainContent';
-import Header from './components/Header';
+import Sidebar from './components/Sidebar/Sidebar';
+import MainContent from './components/MainContent/MainContent';
+import Header from './components/Header/Header';
 
 const App = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const dispatch = useDispatch();
 
   const handleFileClick = (file) => {
-    setSelectedFile(file);
+    dispatch(setSelectedFile(file));
   };
 
   return (
@@ -16,7 +18,7 @@ const App = () => {
       <Header />
       <div className="content">
         <Sidebar onFileClick={handleFileClick} />
-        <MainContent selectedFile={selectedFile} />
+        <MainContent />
       </div>
     </div>
   );

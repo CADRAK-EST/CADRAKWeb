@@ -1,19 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import DXFRender from './DXFRender';
-import CursorCoordinates from './CursorCoordinates';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import './DXFView.css';
 
-const DXFView = ({ parsedData }) => {
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-
-  const handleCursorMove = useCallback((x, y) => {
-    setCursorPosition({ x, y });
-  }, []);
+const DXFView = () => {
+  const parsedData = useSelector((state) => state.parsedData);
 
   return (
     <div className="dxf-view">
-      <DXFRender onCursorMove={handleCursorMove} parsedData={parsedData} />
-      <CursorCoordinates x={cursorPosition.x} y={cursorPosition.y} />
+      {parsedData ? <p className="dxf-view-text">{`Filename loaded: ${parsedData.filename}`}</p> : <p className="dxf-view-text">No file loaded</p>}
     </div>
   );
 };

@@ -1,9 +1,17 @@
+@import '../../../global.css';
+
 .dxf-view {
   position: relative;
   width: 100%;
-  height: 75%;
+  height: 60%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.dxf-view-text {
+  font-size: 24px;
+  font-family: var(--font-family);
+  color: var(--text-color);
 }

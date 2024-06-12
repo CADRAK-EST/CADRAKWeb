@@ -1,10 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import './StatusSection.css';
 
-const StatusSection = ({ selectedFile }) => (
-  <div className="status-section">
-    <p>Status: {selectedFile ? `Loaded ${selectedFile.name}` : 'No file loaded'}</p>
-  </div>
-);
+const StatusSection = () => {
+  const parsedData = useSelector((state) => state.parsedData);
+
+  return (
+    <div className="status-section">
+      <h3>{parsedData ? `Data for: ${parsedData.filename}` : 'No file loaded'}</h3>
+      <div className="json-container">
+        <pre>{parsedData ? JSON.stringify(parsedData, null, 2) : 'No data available'}</pre>
+      </div>
+    </div>
+  );
+};
 
 export default StatusSection;

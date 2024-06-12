@@ -1,8 +1,8 @@
-@import '../global.css';
+@import '../../global.css';
 
 .main-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Ensure this is set correctly */
   height: 100%;
   box-sizing: border-box;
   border-left: var(--border-style);

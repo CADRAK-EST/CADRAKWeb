@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { uploadFile } from '../api';
+import { uploadFile } from '../api/APICalls';
 
 const useFileUpload = (onFileUpload) => {
   const [files, setFiles] = useState([]);
 
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files)
+    const filesSource = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+    const selectedFiles = Array.from(filesSource)
       .filter(file => file.name.endsWith('.dxf'));
     setFiles(selectedFiles);
   };

@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { useFileUpload } from '../../hooks/useFileUpload';
+import useFileUpload from '../../hooks/UseFileUpload'; 
+import { useDispatch } from 'react-redux';
+import { setFiles } from '../../slices/fileSlice';
 import './UploadFile.css';
 
-const UploadFile = ({ onFileUpload, setFiles }) => { // Use setFiles prop
+const UploadFile = () => {
   const [dragging, setDragging] = useState(false);
-  const { files, handleFileChange, handleUpload } = useFileUpload(onFileUpload);
+  const dispatch = useDispatch();
+  const { files, handleFileChange, handleUpload } = useFileUpload((uploadedFiles) => {
+    console.log('Files uploaded:', uploadedFiles);
+    dispatch(setFiles(uploadedFiles));
+  });
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -18,9 +24,7 @@ const UploadFile = ({ onFileUpload, setFiles }) => { // Use setFiles prop
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
-    const droppedFiles = Array.from(e.dataTransfer.files)
-      .filter(file => file.name.endsWith('.dxf'));
-    setFiles(droppedFiles);
+    handleFileChange(e); // Reuse handleFileChange for the drop as well, assuming it can handle the 'dataTransfer.files'
   };
 
   return (
@@ -32,16 +36,15 @@ const UploadFile = ({ onFileUpload, setFiles }) => { // Use setFiles prop
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <p>{files.length > 0 ? `${files.length} files selected` : 'Drag & Drop your files here'}</p>
+        <p>{files.length > 0 ? `Upload ${files.length} files` : "Drag & Drop your files here or click to upload"}</p>
       </div>
-      <input type="file" accept=".dxf" multiple onChange={handleFileChange} />
+      <input type="file" accept=".dxf" multiple onChange={handleFileChange} style={{ display: 'none' }} />
       <button
         type="button"
         onClick={handleUpload}
-        disabled={files.length === 0}
-        className={files.length > 0 ? 'active' : 'inactive'}
+        className={`upload-btn ${dragging ? 'active' : 'inactive'}`}
       >
-        Upload
+        Upload Files
       </button>
     </div>
   );
