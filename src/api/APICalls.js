@@ -8,7 +8,7 @@ export const parseData = async (filePath) => {
     });
 
     if (!response.ok) {
-      throw new Error('--API.js-- Network response was not ok');
+      throw new Error('--API.js-- Network response was not ok for parseData');
     }
 
     return response.json();
@@ -24,7 +24,7 @@ export const uploadFile = async (file) => {
   });
 
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    throw new Error('--API.js-- Network response was not ok for file uploadFile');
   }
 
   return response.json();
