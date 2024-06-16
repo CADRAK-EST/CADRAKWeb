@@ -22,7 +22,7 @@ const Highlight = ({ renderer, camera, views }) => {
             let viewIntersects = null;
 
             for (const view of views) {
-                const viewObjects = view.contours.lines.concat(view.contours.circles, view.contours.arcs);
+                const viewObjects = view.contours.lines.concat(view.contours.circles, view.contours.arcs, view.contours.ellipses, view.contours.polylines);
                 const viewIntersections = raycaster.intersectObjects(viewObjects);
                 if (viewIntersections.length > 0) {
                     intersects = viewIntersections;
@@ -36,6 +36,7 @@ const Highlight = ({ renderer, camera, views }) => {
                     hoveredView.contours.lines.forEach(line => line.material.color.set(origColors.get(line)));
                     hoveredView.contours.circles.forEach(circle => circle.material.color.set(origColors.get(circle)));
                     hoveredView.contours.arcs.forEach(arc => arc.material.color.set(origColors.get(arc)));
+                    hoveredView.contours.ellipses.forEach(ellipse => ellipse.material.color.set(origColors.get(ellipse)));
                 }
                 hoveredView = viewIntersects;
                 origColors.clear();
@@ -51,10 +52,15 @@ const Highlight = ({ renderer, camera, views }) => {
                     origColors.set(arc, arc.material.color.getHex());
                     arc.material.color.set(0xff0000);
                 });
+                hoveredView.contours.ellipses.forEach(ellipse => {
+                    origColors.set(ellipse, ellipse.material.color.getHex());
+                    ellipse.material.color.set(0xff0000);
+                });
             } else if (intersects.length === 0 && hoveredView) {
                 hoveredView.contours.lines.forEach(line => line.material.color.set(origColors.get(line)));
                 hoveredView.contours.circles.forEach(circle => circle.material.color.set(origColors.get(circle)));
                 hoveredView.contours.arcs.forEach(arc => arc.material.color.set(origColors.get(arc)));
+                hoveredView.contours.ellipses.forEach(ellipse => ellipse.material.color.set(origColors.get(ellipse)));
                 hoveredView = null;
                 origColors.clear();
             }

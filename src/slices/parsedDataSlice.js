@@ -2,12 +2,22 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const parsedDataSlice = createSlice({
   name: 'parsedData',
-  initialState: null,
+  initialState: {
+    views: []
+  },
   reducers: {
-    setParsedData: (state, action) => action.payload,
-    clearParsedData: () => null,
+    setParsedData: (state, action) => {
+      state.views = action.payload.views;
+    },
+    clearParsedData: () => ({
+      views: []
+    }),
+    toggleView: (state, action) => {
+      const viewIndex = action.payload;
+      state.views[viewIndex].visible = !state.views[viewIndex].visible;
+    }
   },
 });
 
-export const { setParsedData, clearParsedData } = parsedDataSlice.actions;
+export const { setParsedData, clearParsedData, toggleView } = parsedDataSlice.actions;
 export default parsedDataSlice.reducer;

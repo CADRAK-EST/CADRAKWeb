@@ -1,26 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateCursorPosition } from '../../../slices/cursorPositionSlice';
+import { setParsedData } from '../../../slices/parsedDataSlice';
 import { createGrid } from './utils/grid';
 import { setupCameraControls } from './utils/cameraControls';
-import { drawLine, drawCircle, drawArc, drawText } from './utils/draw';
+import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline, drawText } from './utils/draw';
 import { parseDXFJson } from './utils/parser';
 import Highlight from './Highlight';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
-const ThreeJSCanvas = ({ canvasRef, jsonData, setViews }) => {
+const ThreeJSCanvas = ({ canvasRef }) => {
     const localRef = useRef();
     const dispatch = useDispatch();
+    const parsedData = useSelector((state) => state.parsedData);
     const [renderer, setRenderer] = useState(null);
     const [camera, setCamera] = useState(null);
     const [objectInfo, setObjectInfo] = useState(null);
-    const [views, setLocalViews] = useState([]);
+    const [views, setViews] = useState([]);
+    const initialSetupRef = useRef(false);
+    const scene = useRef(new THREE.Scene()); // Use ref for scene
 
     useEffect(() => {
+        console.log('Initializing ThreeJSCanvas...');
         const currentRef = canvasRef || localRef;
-        const scene = new THREE.Scene();
         const width = currentRef.current.clientWidth;
         const height = currentRef.current.clientHeight;
 
@@ -38,41 +42,10 @@ const ThreeJSCanvas = ({ canvasRef, jsonData, setViews }) => {
         currentRef.current.appendChild(renderer.domElement);
         setRenderer(renderer);
 
-        // Create and add the grid to the scene
         const grid = createGrid();
         grid.position.set(0, 0, 0);
-        scene.add(grid);
+        scene.current.add(grid);
 
-        // Parse the JSON data
-        const parsedData = jsonData ? parseDXFJson(jsonData) : null;
-
-        // Store views for raycasting and visibility management
-        const allViews = parsedData.views.map(view => ({
-            ...view,
-            visible: true,
-            contours: {
-                ...view.contours,
-                lines: view.contours.lines.map(line => {
-                    const lineMesh = drawLine(scene, line);
-                    lineMesh.userData = line;
-                    return lineMesh;
-                }),
-                circles: view.contours.circles.map(circle => {
-                    const circleMesh = drawCircle(scene, circle);
-                    circleMesh.userData = circle;
-                    return circleMesh;
-                }),
-                arcs: view.contours.arcs.map(arc => {
-                    const arcMesh = drawArc(scene, arc);
-                    arcMesh.userData = arc;
-                    return arcMesh;
-                })
-            }
-        }));
-
-        setViews(allViews);
-
-        // Setup camera controls for zooming and panning with restrictions
         setupCameraControls(camera, renderer.domElement);
 
         const handleMouseMove = (event) => {
@@ -86,10 +59,7 @@ const ThreeJSCanvas = ({ canvasRef, jsonData, setViews }) => {
             vector.unproject(camera);
 
             const pos = new THREE.Vector3().copy(vector);
-            const x = (pos.x / (camera.right - camera.left)) * width;
-            const y = (pos.y / (camera.top - camera.bottom)) * height;
-
-            dispatch(updateCursorPosition(pos.x, pos.y));
+            dispatch(updateCursorPosition({ x: pos.x, y: pos.y }));
         };
 
         const handleClick = (event) => {
@@ -103,10 +73,7 @@ const ThreeJSCanvas = ({ canvasRef, jsonData, setViews }) => {
             vector.unproject(camera);
 
             const pos = new THREE.Vector3().copy(vector);
-            const x = (pos.x / (camera.right - camera.left)) * width;
-            const y = (pos.y / (camera.top - camera.bottom)) * height;
-
-            dispatch(updateCursorPosition(pos.x, pos.y));
+            dispatch(updateCursorPosition({ x: pos.x, y: pos.y }));
         };
 
         const canvasElement = currentRef.current;
@@ -115,11 +82,10 @@ const ThreeJSCanvas = ({ canvasRef, jsonData, setViews }) => {
 
         const animate = () => {
             requestAnimationFrame(animate);
-            renderer.render(scene, camera);
+            renderer.render(scene.current, camera);
         };
         animate();
 
-        // Adjust camera aspect ratio and renderer size on window resize
         const handleResize = () => {
             const newWidth = currentRef.current.clientWidth;
             const newHeight = currentRef.current.clientHeight;
@@ -134,13 +100,53 @@ const ThreeJSCanvas = ({ canvasRef, jsonData, setViews }) => {
         window.addEventListener('resize', handleResize);
 
         return () => {
-            // Clean up
             renderer.dispose();
             window.removeEventListener('resize', handleResize);
             canvasElement.removeEventListener('mousemove', handleMouseMove);
             canvasElement.removeEventListener('click', handleClick);
         };
-    }, [canvasRef, jsonData, dispatch]);
+    }, [canvasRef, dispatch]);
+
+    useEffect(() => {
+        console.log('Parsed data changed:', parsedData);
+        if (parsedData && parsedData.views) {
+            const allViews = parsedData.views.map(view => ({
+                ...view,
+                visible: true,
+                contours: {
+                    ...view.contours,
+                    lines: view.contours.lines?.map(line => {
+                        const lineMesh = drawLine(scene.current, line);
+                        lineMesh.userData = line;
+                        return lineMesh;
+                    }) || [],
+                    circles: view.contours.circles?.map(circle => {
+                        const circleMesh = drawCircle(scene.current, circle);
+                        circleMesh.userData = circle;
+                        return circleMesh;
+                    }) || [],
+                    arcs: view.contours.arcs?.map(arc => {
+                        const arcMesh = drawArc(scene.current, arc);
+                        arcMesh.userData = arc;
+                        return arcMesh;
+                    }) || [],
+                    ellipses: view.contours.ellipses?.map(ellipse => {
+                        const ellipseMesh = drawEllipse(scene.current, ellipse);
+                        ellipseMesh.userData = ellipse;
+                        return ellipseMesh;
+                    }) || [],
+                    polylines: view.contours.polylines?.map(polyline => {
+                        const polylineMesh = drawPolyline(scene.current, polyline);
+                        polylineMesh.userData = polyline;
+                        return polylineMesh;
+                    }) || []
+                }
+            }));
+
+            setViews(allViews);
+            console.log('Views set:', allViews);
+        }
+    }, [parsedData]);
 
     return (
         <div ref={canvasRef || localRef} className="threejs-canvas">
