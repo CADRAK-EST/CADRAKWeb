@@ -148,6 +148,16 @@ const ThreeJSCanvas = ({ canvasRef }) => {
         }
     }, [parsedData]);
 
+    useEffect(() => {
+        // Update scene visibility based on view visibility
+        views.forEach((view, index) => {
+            const viewGroup = scene.current.getObjectByName(`view-${index}`);
+            if (viewGroup) {
+                viewGroup.visible = view.visible;
+            }
+        });
+    }, [views]);
+
     return (
         <div ref={canvasRef || localRef} className="threejs-canvas">
             {renderer && camera && views.length > 0 && (
