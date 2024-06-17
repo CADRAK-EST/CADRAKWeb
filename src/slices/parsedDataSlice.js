@@ -7,7 +7,7 @@ const parsedDataSlice = createSlice({
   },
   reducers: {
     setParsedData: (state, action) => {
-      state.views = action.payload.views;
+      state.views = action.payload.views.map(view => ({ ...view, visible: true }));
     },
     clearParsedData: () => ({
       views: []

@@ -11,15 +11,12 @@ import Highlight from './Highlight';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
-const ThreeJSCanvas = ({ canvasRef }) => {
+const ThreeJSCanvas = ({ canvasRef, views }) => {
     const localRef = useRef();
     const dispatch = useDispatch();
-    const parsedData = useSelector((state) => state.parsedData);
     const [renderer, setRenderer] = useState(null);
     const [camera, setCamera] = useState(null);
     const [objectInfo, setObjectInfo] = useState(null);
-    const [views, setViews] = useState([]);
-    const initialSetupRef = useRef(false);
     const scene = useRef(new THREE.Scene()); // Use ref for scene
 
     useEffect(() => {
@@ -108,53 +105,56 @@ const ThreeJSCanvas = ({ canvasRef }) => {
     }, [canvasRef, dispatch]);
 
     useEffect(() => {
-        console.log('Parsed data changed:', parsedData);
-        if (parsedData && parsedData.views) {
-            const allViews = parsedData.views.map(view => ({
-                ...view,
-                visible: true,
-                contours: {
-                    ...view.contours,
-                    lines: view.contours.lines?.map(line => {
-                        const lineMesh = drawLine(scene.current, line);
-                        lineMesh.userData = line;
-                        return lineMesh;
-                    }) || [],
-                    circles: view.contours.circles?.map(circle => {
-                        const circleMesh = drawCircle(scene.current, circle);
-                        circleMesh.userData = circle;
-                        return circleMesh;
-                    }) || [],
-                    arcs: view.contours.arcs?.map(arc => {
-                        const arcMesh = drawArc(scene.current, arc);
-                        arcMesh.userData = arc;
-                        return arcMesh;
-                    }) || [],
-                    ellipses: view.contours.ellipses?.map(ellipse => {
-                        const ellipseMesh = drawEllipse(scene.current, ellipse);
-                        ellipseMesh.userData = ellipse;
-                        return ellipseMesh;
-                    }) || [],
-                    polylines: view.contours.polylines?.map(polyline => {
-                        const polylineMesh = drawPolyline(scene.current, polyline);
-                        polylineMesh.userData = polyline;
-                        return polylineMesh;
-                    }) || []
-                }
-            }));
-
-            setViews(allViews);
-            console.log('Views set:', allViews);
-        }
-    }, [parsedData]);
-
-    useEffect(() => {
-        // Update scene visibility based on view visibility
+        console.log('Views changed:', views);
         views.forEach((view, index) => {
-            const viewGroup = scene.current.getObjectByName(`view-${index}`);
-            if (viewGroup) {
-                viewGroup.visible = view.visible;
+            let viewGroup = scene.current.getObjectByName(`view-${index}`);
+            if (!viewGroup) {
+                viewGroup = new THREE.Group();
+                viewGroup.name = `view-${index}`;
+                if (view.contours) {
+                    if (view.contours.lines) {
+                        view.contours.lines.forEach(line => {
+                            const lineMesh = drawLine(scene.current, line);
+                            lineMesh.userData = line;
+                            viewGroup.add(lineMesh);
+                        });
+                    }
+
+                    if (view.contours.circles) {
+                        view.contours.circles.forEach(circle => {
+                            const circleMesh = drawCircle(scene.current, circle);
+                            circleMesh.userData = circle;
+                            viewGroup.add(circleMesh);
+                        });
+                    }
+
+                    if (view.contours.arcs) {
+                        view.contours.arcs.forEach(arc => {
+                            const arcMesh = drawArc(scene.current, arc);
+                            arcMesh.userData = arc;
+                            viewGroup.add(arcMesh);
+                        });
+                    }
+
+                    if (view.contours.ellipses) {
+                        view.contours.ellipses.forEach(ellipse => {
+                            const ellipseMesh = drawEllipse(scene.current, ellipse);
+                            ellipseMesh.userData = ellipse;
+                            viewGroup.add(ellipseMesh);
+                        });
+                    }
+
+                    if (view.contours.polylines) {
+                        view.contours.polylines.forEach(polyline => {
+                            const polylineMesh = drawPolyline(scene.current, polyline);
+                            polylineMesh.userData = polyline;
+                            viewGroup.add(polylineMesh);
+                        });
+                    }
+                }
+                scene.current.add(viewGroup);
             }
+            viewGroup.visible = view.visible; // Set visibility
         });
     }, [views]);
 

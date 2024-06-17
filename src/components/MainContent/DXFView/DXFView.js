@@ -13,21 +13,24 @@ const DXFView = () => {
   const [views, setViews] = useState([]);
 
   useEffect(() => {
-    if (parsedData && parsedData.views) {
-      setViews(parsedData.views);
+    if (parsedData && parsedData.views && views.length === 0) {
+      const initializedViews = parsedData.views.map(view => ({ ...view, visible: true }));
+      setViews(initializedViews);
+      console.log('Initialized views:', initializedViews);
     }
-  }, [parsedData]);
+  }, [parsedData, views.length]);
 
   const handleToggleView = (index) => {
     dispatch(toggleView(index));
     setViews((prevViews) =>
         prevViews.map((view, i) => (i === index ? { ...view, visible: !view.visible } : view))
     );
+    console.log('Toggled view at index:', index);
   };
 
   return (
       <div className="dxf-view">
-        {parsedData && <ThreeJSCanvas canvasRef={canvasRef} jsonData={parsedData} setViews={setViews} />}
+        {parsedData && <ThreeJSCanvas canvasRef={canvasRef} views={views} />}
         <CursorCoordinates className="cursor-coordinates" />
         <ViewToggle views={views} toggleView={handleToggleView} />
       </div>
