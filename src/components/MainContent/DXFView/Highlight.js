@@ -21,15 +21,15 @@ const Highlight = ({ renderer, camera, views }) => {
             let intersects = [];
             let viewIntersects = null;
 
-            for (const view of views) {
-                const viewObjects = view.contours.lines.concat(view.contours.circles, view.contours.arcs, view.contours.ellipses, view.contours.polylines);
-                const viewIntersections = raycaster.intersectObjects(viewObjects);
-                if (viewIntersections.length > 0) {
-                    intersects = viewIntersections;
-                    viewIntersects = view;
-                    break;
-                }
-            }
+            // for (const view of views) {
+            //     const viewObjects = view.contours.lines.concat(view.contours.circles, view.contours.arcs, view.contours.ellipses, view.contours.polylines);
+            //     const viewIntersections = raycaster.intersectObjects(viewObjects);
+            //     if (viewIntersections.length > 0) {
+            //         intersects = viewIntersections;
+            //         viewIntersects = view;
+            //         break;
+            //     }
+            // }
 
             if (intersects.length > 0 && hoveredView !== viewIntersects) {
                 if (hoveredView) {
