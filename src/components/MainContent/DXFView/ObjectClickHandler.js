@@ -18,21 +18,29 @@ const ObjectClickHandler = ({ renderer, camera, views, setObjectInfo }) => {
 
             let intersects = [];
             for (const view of views) {
-                const viewObjects = view.contours.lines.concat(view.contours.circles, view.contours.arcs);
-                    const viewIntersections = raycaster.intersectObjects(viewObjects);
-                    if (viewIntersections.length > 0) {
-                        intersects = viewIntersections;
-                        break;
+                    if (view.contours) {
+
+                        const lines = (view.contours.lines || []).filter(line => line instanceof THREE.Object3D);
+                        const circles = (view.contours.circles || []).filter(circle => circle instanceof THREE.Object3D);
+                        const arcs = (view.contours.arcs || []).filter(arc => arc instanceof THREE.Object3D);
+
+                        const viewObjects = [...lines, ...circles, ...arcs];
+
+                        const viewIntersections = raycaster.intersectObjects(viewObjects);
+
+                        if (viewIntersections.length > 0) {
+                            intersects = viewIntersections;
+                            break;
+                        }
+                    } else {
+                        console.warn('View has no contours:', view);
+                    }
+                
                 }
-            }
 
-            if (intersects.length > 0) {
-                setObjectInfo(null); // Do not set any information
-            }
-
-            const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(camera);
-            dispatch(updateCursorPosition(vector.x, vector.y));
-        };
+                const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(camera);
+                dispatch(updateCursorPosition({ x: vector.x, y: vector.y }));
+            };
 
         renderer.domElement.addEventListener('click', onClick);
 

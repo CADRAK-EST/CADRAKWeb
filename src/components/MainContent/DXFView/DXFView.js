@@ -29,7 +29,7 @@ const DXFView = () => {
 
   return (
       <div className="dxf-view">
-        {pageState.selectedPage && <ThreeJSCanvas canvasRef={canvasRef} views={views} />}
+        <ThreeJSCanvas canvasRef={canvasRef} views={views} />
         <CursorCoordinates className="cursor-coordinates" />
         <ViewToggle views={views} toggleView={handleToggleView} />
       </div>
