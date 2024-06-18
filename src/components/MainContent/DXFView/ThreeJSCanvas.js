@@ -8,14 +8,12 @@ import Highlight from './Highlight';
 import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline } from './utils/draw';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
-import { clearParsedData } from '../../../slices/parsedDataSlice';
 
-const ThreeJSCanvas = ({ canvasRef, views }) => {
+const ThreeJSCanvas = ({ canvasRef, views, visibility }) => {
     const localRef = useRef();
     const dispatch = useDispatch();
     const [renderer, setRenderer] = useState(null);
     const [camera, setCamera] = useState(null);
-    const [objectInfo, setObjectInfo] = useState(null);
     const scene = useRef(new THREE.Scene());
     const initialSetupRef = useRef(false);
 
@@ -91,7 +89,6 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
     }, [canvasRef, dispatch]);
 
     useEffect(() => {
-        console.log("2nd useEffect called")
         // Clear old objects from scene
         while (scene.current.children.length > 0) {
             scene.current.remove(scene.current.children[0]);
@@ -150,16 +147,16 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
                 }
                 scene.current.add(viewGroup);
             }
-            viewGroup.visible = view.visible;
+            viewGroup.visible = visibility[index];
         });
-    }, [views]);
+    }, [views, visibility]);
 
     return (
         <div ref={canvasRef || localRef} className="threejs-canvas">
             {renderer && camera && views.length > 0 && (
                 <>
                     <Highlight renderer={renderer} camera={camera} views={views} />
-                    <ObjectClickHandler renderer={renderer} camera={camera} views={views} setObjectInfo={setObjectInfo} />
+                    <ObjectClickHandler renderer={renderer} camera={camera} views={views}/>
                 </>
             )}
         </div>

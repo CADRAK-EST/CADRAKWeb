@@ -1,17 +1,16 @@
 ﻿import React from 'react';
 
-const ViewToggle = ({ views, toggleView }) => {
+const ViewToggle = ({ views, visibility, toggleView }) => {
     return (
-        <div className="view-toggle" style={styles.container}>
-            <h3 style={styles.title}>Views</h3>
+        <div className="view-toggle">
             {views.map((view, index) => (
-                <div key={index} style={styles.viewItem}>
+                <div key={index}>
                     <input
                         type="checkbox"
-                        checked={view.visible}
+                        checked={visibility[index]}
                         onChange={() => toggleView(index)}
-                        style={styles.checkbox}
                     />
+                    {view.name}
                     <label style={styles.label}>{`View ${index + 1}`}</label>
                 </div>
             ))}

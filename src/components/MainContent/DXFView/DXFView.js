@@ -10,28 +10,20 @@ const DXFView = () => {
   const pageState = useSelector((state) => state.pageData);
   const canvasRef = useRef();
   const dispatch = useDispatch();
-  const [views, setViews] = useState([]);
-
-  useEffect(() => {
-    console.log('DXFView component rendered');
-    if (pageState && pageState.views && views.length === 0) {
-      const initializedViews = pageState.views.map(view => ({ ...view, visible: true }));
-      setViews(initializedViews);
-    }
-  }, [pageState, views.length]);
 
   const handleToggleView = (index) => {
     dispatch(toggleView(index));
-    setViews((prevViews) =>
-        prevViews.map((view, i) => (i === index ? { ...view, visible: !view.visible } : view))
-    );
   };
 
   return (
       <div className="dxf-view">
-        <ThreeJSCanvas canvasRef={canvasRef} views={views} />
+        <ThreeJSCanvas
+            canvasRef={canvasRef}
+            views={pageState.views ? pageState.views : []}
+            visibility={pageState.visibility ? pageState.visibility : []}
+        />
         <CursorCoordinates className="cursor-coordinates" />
-        <ViewToggle views={views} toggleView={handleToggleView} />
+        <ViewToggle views={pageState.views} visibility={pageState.visibility} toggleView={handleToggleView} />
       </div>
   );
 };

@@ -5,23 +5,24 @@ const pageDataSlice = createSlice({
   initialState: {
     selectedPage: null,
     views: [],
+    visibility: [], // Store visibility of each view
   },
   reducers: {
     setPage: (state, action) => {
       state.selectedPage = action.payload;
       state.views = action.payload.views.map(view => ({ ...view, visible: true }));
+      state.visibility = action.payload.views.map(() => true); // Initialize all views as visible
     },
     clearPage: () => ({
       selectedPage: null,
       views: [],
+      visibility: [],
     }),
     toggleView: (state, action) => {
       const viewIndex = action.payload;
-      if (state.views[viewIndex])
-      {
-        state.views[viewIndex].visible = !state.views[viewIndex].visible;
-      }
-      else {
+      if (state.visibility[viewIndex] !== undefined) {
+        state.visibility[viewIndex] = !state.visibility[viewIndex];
+      } else {
         console.warn('Attempted to toggle a view that does not exist:', viewIndex);
       }
     }
