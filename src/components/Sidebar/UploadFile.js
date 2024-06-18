@@ -29,7 +29,7 @@ const UploadFile = () => {
 
   return (
     <div className="upload-file">
-      <h2>Upload DXF Files</h2>
+      <h2>Upload DXF or Zip Files</h2>
       <div
         className={`drag-drop-area ${dragging ? 'dragging' : ''}`}
         onDragOver={handleDragOver}
@@ -38,7 +38,7 @@ const UploadFile = () => {
       >
         <p>{files.length > 0 ? `Upload ${files.length} files` : "Drag & Drop your files here or click to upload"}</p>
       </div>
-      <input type="file" accept=".dxf" multiple onChange={handleFileChange} style={{ display: 'none' }} />
+      <input type="file" accept=".dxf,.zip" multiple onChange={handleFileChange} style={{ display: 'none' }} />
       <button
         type="button"
         onClick={handleUpload}

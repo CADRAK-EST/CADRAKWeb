@@ -14,7 +14,9 @@ const MainContent = () => {
   useEffect(() => {
     if (selectedFile) {
       fetchParsedData(selectedFile.path).then((data) => {
-        dispatch(setParsedData(data));
+        if (data) {
+          dispatch(setParsedData(data.pages[0]));
+        }
       });
     } else {
       dispatch(clearParsedData());

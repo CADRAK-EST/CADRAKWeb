@@ -7,7 +7,7 @@ const useFileUpload = (onFileUpload) => {
   const handleFileChange = (e) => {
     const filesSource = e.dataTransfer ? e.dataTransfer.files : e.target.files;
     const selectedFiles = Array.from(filesSource)
-      .filter(file => file.name.endsWith('.dxf'));
+      .filter(file => file.name.endsWith('.dxf') || file.name.endsWith('.zip'));
     setFiles(selectedFiles);
   };
 
