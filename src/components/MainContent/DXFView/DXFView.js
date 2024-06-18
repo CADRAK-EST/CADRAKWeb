@@ -17,7 +17,6 @@ const DXFView = () => {
     if (pageState && pageState.views && views.length === 0) {
       const initializedViews = pageState.views.map(view => ({ ...view, visible: true }));
       setViews(initializedViews);
-      console.log('Initialized views:', initializedViews);
     }
   }, [pageState, views.length]);
 
@@ -26,7 +25,6 @@ const DXFView = () => {
     setViews((prevViews) =>
         prevViews.map((view, i) => (i === index ? { ...view, visible: !view.visible } : view))
     );
-    console.log('Toggled view at index:', index);
   };
 
   return (

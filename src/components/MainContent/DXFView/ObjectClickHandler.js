@@ -19,10 +19,10 @@ const ObjectClickHandler = ({ renderer, camera, views, setObjectInfo }) => {
             let intersects = [];
             for (const view of views) {
                 const viewObjects = view.contours.lines.concat(view.contours.circles, view.contours.arcs);
-                const viewIntersections = raycaster.intersectObjects(viewObjects);
-                if (viewIntersections.length > 0) {
-                    intersects = viewIntersections;
-                    break;
+                    const viewIntersections = raycaster.intersectObjects(viewObjects);
+                    if (viewIntersections.length > 0) {
+                        intersects = viewIntersections;
+                        break;
                 }
             }
 

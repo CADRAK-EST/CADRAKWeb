@@ -4,10 +4,11 @@ import { useDispatch } from 'react-redux';
 import { updateCursorPosition } from '../../../slices/cursorPositionSlice';
 import { createGrid } from './utils/grid';
 import { setupCameraControls } from './utils/cameraControls';
-import { drawLine, drawCircle, drawArc, drawEllipse, /*drawPolyline, drawText */} from './utils/draw';
-/*import { parseDXFJson } from './utils/parser';*/
+import Highlight from './Highlight';
+import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline } from './utils/draw';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
+import { clearParsedData } from '../../../slices/parsedDataSlice';
 
 const ThreeJSCanvas = ({ canvasRef, views }) => {
     const localRef = useRef();
@@ -15,37 +16,36 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
     const [renderer, setRenderer] = useState(null);
     const [camera, setCamera] = useState(null);
     const [objectInfo, setObjectInfo] = useState(null);
-    const scene = useRef(new THREE.Scene()); // Use ref for scene
+    const scene = useRef(new THREE.Scene());
     const initialSetupRef = useRef(false);
 
     useEffect(() => {
-        if (initialSetupRef.current) return; // Prevent re-initialization
-            initialSetupRef.current = true;
-        
-        console.log('Initializing ThreeJSCanvas...');
+        if (initialSetupRef.current) return;
+        initialSetupRef.current = true;
+
         const currentRef = canvasRef || localRef;
         const width = currentRef.current.clientWidth;
         const height = currentRef.current.clientHeight;
 
-        const camera = new THREE.OrthographicCamera(
+        const newCamera = new THREE.OrthographicCamera(
             width / -2, width / 2,
             height / 2, height / -2,
             1, 1000
         );
-        camera.position.set(0, 0, 5);
-        setCamera(camera);
+        newCamera.position.set(0, 0, 5);
+        setCamera(newCamera);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setClearColor(0xffffff, 1);
-        renderer.setSize(width, height);
-        currentRef.current.appendChild(renderer.domElement);
-        setRenderer(renderer);
+        const newRenderer = new THREE.WebGLRenderer({ antialias: true });
+        newRenderer.setClearColor(0xffffff, 1);
+        newRenderer.setSize(width, height);
+        currentRef.current.appendChild(newRenderer.domElement);
+        setRenderer(newRenderer);
 
         const grid = createGrid();
         grid.position.set(0, 0, 0);
         scene.current.add(grid);
 
-        setupCameraControls(camera, renderer.domElement);
+        setupCameraControls(newCamera, newRenderer.domElement);
 
         const handleMouseMove = (event) => {
             const rect = currentRef.current.getBoundingClientRect();
@@ -55,7 +55,7 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
             );
 
             const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-            vector.unproject(camera);
+            vector.unproject(newCamera);
 
             const pos = new THREE.Vector3().copy(vector);
             dispatch(updateCursorPosition({ x: pos.x, y: pos.y }));
@@ -66,33 +66,42 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
 
         const animate = () => {
             requestAnimationFrame(animate);
-            renderer.render(scene.current, camera);
+            newRenderer.render(scene.current, newCamera);
         };
         animate();
 
         const handleResize = () => {
             const newWidth = currentRef.current.clientWidth;
             const newHeight = currentRef.current.clientHeight;
-            camera.left = newWidth / -2;
-            camera.right = newWidth / 2;
-            camera.top = newHeight / 2;
-            camera.bottom = newHeight / -2;
-            camera.updateProjectionMatrix();
-            renderer.setSize(newWidth, newHeight);
+            newCamera.left = newWidth / -2;
+            newCamera.right = newWidth / 2;
+            newCamera.top = newHeight / 2;
+            newCamera.bottom = newHeight / -2;
+            newCamera.updateProjectionMatrix();
+            newRenderer.setSize(newWidth, newHeight);
         };
 
         window.addEventListener('resize', handleResize);
 
-        
         return () => {
-            renderer.dispose();
+            newRenderer.dispose();
             window.removeEventListener('resize', handleResize);
             canvasElement.removeEventListener('mousemove', handleMouseMove);
         };
     }, [canvasRef, dispatch]);
 
     useEffect(() => {
-        console.log('Views changed:', views);
+        console.log("2nd useEffect called")
+        // Clear old objects from scene
+        while (scene.current.children.length > 0) {
+            scene.current.remove(scene.current.children[0]);
+        }
+
+        // Add grid
+        const grid = createGrid();
+        scene.current.add(grid);
+
+        // Draw new objects based on views
         views.forEach((view, index) => {
             let viewGroup = scene.current.getObjectByName(`view-${index}`);
             if (!viewGroup) {
@@ -131,17 +140,17 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
                         });
                     }
 
-                    // if (view.contours.polylines) {
-                    //     view.contours.polylines.forEach(polyline => {
-                    //         const polylineMesh = drawPolyline(scene.current, polyline);
-                    //         polylineMesh.userData = polyline;
-                    //         viewGroup.add(polylineMesh);
-                    //     });
-                    // }
+                    if (view.contours.polylines) {
+                        view.contours.polylines.forEach(polyline => {
+                            const polylineMesh = drawPolyline(scene.current, polyline);
+                            polylineMesh.userData = polyline;
+                            viewGroup.add(polylineMesh);
+                        });
+                    }
                 }
                 scene.current.add(viewGroup);
             }
-            viewGroup.visible = view.visible; // Set visibility
+            viewGroup.visible = view.visible;
         });
     }, [views]);
 
@@ -149,7 +158,7 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
         <div ref={canvasRef || localRef} className="threejs-canvas">
             {renderer && camera && views.length > 0 && (
                 <>
-                    {/*<Highlight renderer={renderer} camera={camera} views={views} />*/}
+                    <Highlight renderer={renderer} camera={camera} views={views} />
                     <ObjectClickHandler renderer={renderer} camera={camera} views={views} setObjectInfo={setObjectInfo} />
                 </>
             )}
