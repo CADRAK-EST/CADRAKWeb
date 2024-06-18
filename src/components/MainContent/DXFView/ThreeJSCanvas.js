@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 import { updateCursorPosition } from '../../../slices/cursorPositionSlice';
 import { createGrid } from './utils/grid';
 import { setupCameraControls } from './utils/cameraControls';
-import { drawLine, drawCircle, drawArc, drawEllipse, /*drawPolyline, drawText */} from './utils/draw';
-/*import { parseDXFJson } from './utils/parser';*/
+import Highlight from './Highlight';
+import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline, /* drawText */} from './utils/draw';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
@@ -21,8 +21,7 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
     useEffect(() => {
         if (initialSetupRef.current) return; // Prevent re-initialization
             initialSetupRef.current = true;
-        
-        console.log('Initializing ThreeJSCanvas...');
+            
         const currentRef = canvasRef || localRef;
         const width = currentRef.current.clientWidth;
         const height = currentRef.current.clientHeight;
@@ -92,7 +91,6 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
     }, [canvasRef, dispatch]);
 
     useEffect(() => {
-        console.log('Views changed:', views);
         views.forEach((view, index) => {
             let viewGroup = scene.current.getObjectByName(`view-${index}`);
             if (!viewGroup) {
@@ -131,13 +129,13 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
                         });
                     }
 
-                    // if (view.contours.polylines) {
-                    //     view.contours.polylines.forEach(polyline => {
-                    //         const polylineMesh = drawPolyline(scene.current, polyline);
-                    //         polylineMesh.userData = polyline;
-                    //         viewGroup.add(polylineMesh);
-                    //     });
-                    // }
+                    if (view.contours.polylines) {
+                        view.contours.polylines.forEach(polyline => {
+                            const polylineMesh = drawPolyline(scene.current, polyline);
+                            polylineMesh.userData = polyline;
+                            viewGroup.add(polylineMesh);
+                        });
+                    }
                 }
                 scene.current.add(viewGroup);
             }
@@ -149,7 +147,7 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
         <div ref={canvasRef || localRef} className="threejs-canvas">
             {renderer && camera && views.length > 0 && (
                 <>
-                    {/*<Highlight renderer={renderer} camera={camera} views={views} />*/}
+                    <Highlight renderer={renderer} camera={camera} views={views} />
                     <ObjectClickHandler renderer={renderer} camera={camera} views={views} setObjectInfo={setObjectInfo} />
                 </>
             )}

@@ -103,7 +103,7 @@ export const drawEllipse = (scene, ellipseData) => {
 
 export const drawPolyline = (scene, polylineData) => {
     const material = createMaterial(polylineData.style, polylineData.colour, polylineData.weight);
-    const points = polylineData.vertices.map(vertex => new THREE.Vector3(vertex.x, vertex.y, 0));
+    const points = polylineData.points.map(point => new THREE.Vector3(point.x, point.y, 0));
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const polyline = new THREE.Line(geometry, material);
     if (material instanceof THREE.LineDashedMaterial) {

@@ -13,11 +13,9 @@ const DXFView = () => {
   const [views, setViews] = useState([]);
 
   useEffect(() => {
-    console.log('DXFView component rendered');
     if (parsedData && parsedData.views && views.length === 0) {
       const initializedViews = parsedData.views.map(view => ({ ...view, visible: true }));
       setViews(initializedViews);
-      console.log('Initialized views:', initializedViews);
     }
   }, [parsedData, views.length]);
 
@@ -26,7 +24,6 @@ const DXFView = () => {
     setViews((prevViews) =>
         prevViews.map((view, i) => (i === index ? { ...view, visible: !view.visible } : view))
     );
-    console.log('Toggled view at index:', index);
   };
 
   return (
