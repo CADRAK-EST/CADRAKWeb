@@ -4,22 +4,22 @@ import './DXFView.css';
 import ThreeJSCanvas from './ThreeJSCanvas';
 import CursorCoordinates from './CursorCoordinates';
 import ViewToggle from './ViewToggle';
-import { toggleView } from '../../../slices/parsedDataSlice';
+import { toggleView } from '../../../slices/pageDataSlice';
 
 const DXFView = () => {
-  const parsedData = useSelector((state) => state.parsedData);
+  const pageState = useSelector((state) => state.pageData);
   const canvasRef = useRef();
   const dispatch = useDispatch();
   const [views, setViews] = useState([]);
 
   useEffect(() => {
     console.log('DXFView component rendered');
-    if (parsedData && parsedData.views && views.length === 0) {
-      const initializedViews = parsedData.views.map(view => ({ ...view, visible: true }));
+    if (pageState && pageState.views && views.length === 0) {
+      const initializedViews = pageState.views.map(view => ({ ...view, visible: true }));
       setViews(initializedViews);
       console.log('Initialized views:', initializedViews);
     }
-  }, [parsedData, views.length]);
+  }, [pageState, views.length]);
 
   const handleToggleView = (index) => {
     dispatch(toggleView(index));
@@ -31,7 +31,7 @@ const DXFView = () => {
 
   return (
       <div className="dxf-view">
-        {parsedData && <ThreeJSCanvas canvasRef={canvasRef} views={views} />}
+        {pageState.selectedPage && <ThreeJSCanvas canvasRef={canvasRef} views={views} />}
         <CursorCoordinates className="cursor-coordinates" />
         <ViewToggle views={views} toggleView={handleToggleView} />
       </div>

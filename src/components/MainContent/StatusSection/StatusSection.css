@@ -4,8 +4,8 @@
   height: 40%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align content to the top */
-  align-items: left;
+  justify-content: flex-start;
+  align-items: flex-start;
   border-top: var(--border-style);
   padding: 1rem;
   box-sizing: border-box;
@@ -15,10 +15,39 @@
   margin-bottom: 1rem;
 }
 
-.json-container {
+.status-content {
+  display: flex;
   width: 100%;
-  height: calc(100% - 40px); /* Adjust height considering the header */
-  overflow-y: auto; /* Scrollable JSON data */
+  height: calc(100% - 40px);
+}
+
+.json-list {
+  width: 30%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: var(--background-color);
+  padding: 0.5rem;
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  margin-right: 1rem;
+}
+
+.json-list-item {
+  padding: 0.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.json-list-item:hover {
+  background-color: var(--hover-background-color);
+}
+
+.json-container {
+  width: 70%;
+  height: calc(100% - 40px);
+  overflow-y: auto;
   background-color: var(--background-color);
   padding: 0.5rem;
   box-shadow: var(--shadow);

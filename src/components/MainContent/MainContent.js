@@ -13,13 +13,11 @@ const MainContent = () => {
 
   useEffect(() => {
     if (selectedFile) {
-      fetchParsedData(selectedFile.path).then((data) => {
-        if (data) {
-          dispatch(setParsedData(data.pages[0]));
-        }
-      });
-    } else {
       dispatch(clearParsedData());
+
+      fetchParsedData(selectedFile.path, (pageData) => {
+        dispatch(setParsedData({ fileName: selectedFile.name, pageData }));
+      });
     }
   }, [selectedFile, fetchParsedData, dispatch]);
 

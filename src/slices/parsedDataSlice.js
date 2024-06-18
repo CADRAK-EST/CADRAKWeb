@@ -3,21 +3,21 @@ import { createSlice } from '@reduxjs/toolkit';
 const parsedDataSlice = createSlice({
   name: 'parsedData',
   initialState: {
-    views: []
+    pages: {},
   },
   reducers: {
     setParsedData: (state, action) => {
-      state.views = action.payload.views.map(view => ({ ...view, visible: true }));
+      const { fileName, pageData } = action.payload;
+      if (!state.pages[fileName]) {
+        state.pages[fileName] = [];
+      }
+      state.pages[fileName].push(pageData);
     },
     clearParsedData: () => ({
-      views: []
+      pages: {},
     }),
-    toggleView: (state, action) => {
-      const viewIndex = action.payload;
-      state.views[viewIndex].visible = !state.views[viewIndex].visible;
-    }
   },
 });
 
-export const { setParsedData, clearParsedData, toggleView } = parsedDataSlice.actions;
+export const { setParsedData, clearParsedData } = parsedDataSlice.actions;
 export default parsedDataSlice.reducer;

@@ -2,13 +2,11 @@ import { useCallback } from 'react';
 import { parseData } from '../api/APICalls';
 
 const useParsedData = () => {
-  const fetchParsedData = useCallback(async (filePath) => {
+  const fetchParsedData = useCallback(async (filePath, onNewPage) => {
     try {
-      const data = await parseData(filePath);
-      return data.parsed_data
+      await parseData(filePath, onNewPage);
     } catch (error) {
       console.error('Error fetching parsed data:', error);
-      return null;
     }
   }, []);
 
