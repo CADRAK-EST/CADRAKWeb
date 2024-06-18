@@ -14,7 +14,13 @@ const parsedDataSlice = createSlice({
     }),
     toggleView: (state, action) => {
       const viewIndex = action.payload;
-      state.views[viewIndex].visible = !state.views[viewIndex].visible;
+      if (state.views[viewIndex])
+      {
+        state.views[viewIndex].visible = !state.views[viewIndex].visible;
+      }
+      else {
+        console.warn('Attempted to toggle a view that does not exist:', viewIndex);
+      }
     }
   },
 });

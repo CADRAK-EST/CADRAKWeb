@@ -28,7 +28,7 @@ const DXFView = () => {
 
   return (
       <div className="dxf-view">
-        {parsedData && <ThreeJSCanvas canvasRef={canvasRef} views={views} />}
+        <ThreeJSCanvas canvasRef={canvasRef} views={parsedData ? parsedData.views : []} />
         <CursorCoordinates className="cursor-coordinates" />
         <ViewToggle views={views} toggleView={handleToggleView} />
       </div>
