@@ -83,8 +83,6 @@ export const drawArc = (scene, arcData) => {
 };
 
 export const drawEllipse = (scene, ellipseData) => {
-    console.log('Ellipse Data:', ellipseData);
-
     const material = createMaterial(ellipseData.style, ellipseData.colour, ellipseData.weight);
     const curve = new THREE.EllipseCurve(
         0, 0, // Start at the origin

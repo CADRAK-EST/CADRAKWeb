@@ -7,7 +7,6 @@ import { createGrid } from './utils/grid';
 import { setupCameraControls } from './utils/cameraControls';
 import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline, drawText } from './utils/draw';
 import { parseDXFJson } from './utils/parser';
-import Highlight from './Highlight';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
@@ -18,8 +17,12 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
     const [camera, setCamera] = useState(null);
     const [objectInfo, setObjectInfo] = useState(null);
     const scene = useRef(new THREE.Scene()); // Use ref for scene
+    const initialSetupRef = useRef(false);
 
     useEffect(() => {
+        if (initialSetupRef.current) return; // Prevent re-initialization
+            initialSetupRef.current = true;
+        
         console.log('Initializing ThreeJSCanvas...');
         const currentRef = canvasRef || localRef;
         const width = currentRef.current.clientWidth;
@@ -59,23 +62,8 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
             dispatch(updateCursorPosition({ x: pos.x, y: pos.y }));
         };
 
-        const handleClick = (event) => {
-            const rect = currentRef.current.getBoundingClientRect();
-            const mouse = new THREE.Vector2(
-                ((event.clientX - rect.left) / rect.width) * 2 - 1,
-                -((event.clientY - rect.top) / rect.height) * 2 + 1
-            );
-
-            const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-            vector.unproject(camera);
-
-            const pos = new THREE.Vector3().copy(vector);
-            dispatch(updateCursorPosition({ x: pos.x, y: pos.y }));
-        };
-
         const canvasElement = currentRef.current;
         canvasElement.addEventListener('mousemove', handleMouseMove);
-        canvasElement.addEventListener('click', handleClick);
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -96,11 +84,11 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
 
         window.addEventListener('resize', handleResize);
 
+        
         return () => {
             renderer.dispose();
             window.removeEventListener('resize', handleResize);
             canvasElement.removeEventListener('mousemove', handleMouseMove);
-            canvasElement.removeEventListener('click', handleClick);
         };
     }, [canvasRef, dispatch]);
 
@@ -144,13 +132,13 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
                         });
                     }
 
-                    if (view.contours.polylines) {
-                        view.contours.polylines.forEach(polyline => {
-                            const polylineMesh = drawPolyline(scene.current, polyline);
-                            polylineMesh.userData = polyline;
-                            viewGroup.add(polylineMesh);
-                        });
-                    }
+                    // if (view.contours.polylines) {
+                    //     view.contours.polylines.forEach(polyline => {
+                    //         const polylineMesh = drawPolyline(scene.current, polyline);
+                    //         polylineMesh.userData = polyline;
+                    //         viewGroup.add(polylineMesh);
+                    //     });
+                    // }
                 }
                 scene.current.add(viewGroup);
             }
@@ -162,7 +150,7 @@ const ThreeJSCanvas = ({ canvasRef, views }) => {
         <div ref={canvasRef || localRef} className="threejs-canvas">
             {renderer && camera && views.length > 0 && (
                 <>
-                    <Highlight renderer={renderer} camera={camera} views={views} />
+                    {/*<Highlight renderer={renderer} camera={camera} views={views} />*/}
                     <ObjectClickHandler renderer={renderer} camera={camera} views={views} setObjectInfo={setObjectInfo} />
                 </>
             )}
