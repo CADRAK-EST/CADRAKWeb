@@ -4,7 +4,7 @@ import './DXFView.css';
 import ThreeJSCanvas from './ThreeJSCanvas';
 import CursorCoordinates from './CursorCoordinates';
 import ViewToggle from './ViewToggle';
-import { toggleView, setParsedData } from '../../../slices/parsedDataSlice';
+import { toggleView } from '../../../slices/parsedDataSlice';
 
 const DXFView = () => {
   const parsedData = useSelector((state) => state.parsedData);

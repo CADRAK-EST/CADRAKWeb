@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { updateCursorPosition } from '../../../slices/cursorPositionSlice';
-import { setParsedData } from '../../../slices/parsedDataSlice';
 import { createGrid } from './utils/grid';
 import { setupCameraControls } from './utils/cameraControls';
-import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline, drawText } from './utils/draw';
-import { parseDXFJson } from './utils/parser';
+import { drawLine, drawCircle, drawArc, drawEllipse, /*drawPolyline, drawText */} from './utils/draw';
+/*import { parseDXFJson } from './utils/parser';*/
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
