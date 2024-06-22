@@ -11,6 +11,12 @@
   box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+  .status-section {
+    height: auto;
+  }
+}
+
 .status-section h3 {
   margin-bottom: 1rem;
 }

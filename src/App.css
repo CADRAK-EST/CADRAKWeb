@@ -12,9 +12,17 @@
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+  flex-direction: row;
+  width: 100%;
 }
 
 .app-container {
   display: flex;
   height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
 }

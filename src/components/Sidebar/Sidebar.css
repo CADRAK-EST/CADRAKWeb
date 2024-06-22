@@ -1,3 +1,5 @@
+@import '../../global.css';
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -11,4 +13,11 @@
   padding: 1rem;
   border-radius: var(--border-radius);
   font-size: 24px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
 }

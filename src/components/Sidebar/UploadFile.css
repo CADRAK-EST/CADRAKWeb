@@ -6,10 +6,16 @@
   background-color: var(--background-color);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
 }
 
 .upload-file h2 {
+  font-size: 24px;
   margin-bottom: 1rem;
+  text-align: left;
 }
 
 .drag-drop-area {
@@ -42,4 +48,19 @@ input[type="file"] {
 .upload-btn {
   padding: 10px 20px; 
   font-size: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .upload-file {
+    height: auto;
+    width: 100%;
+  }
+
+  .upload-btn {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
 }
