@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './DXFView.css';
 import ThreeJSCanvas from './ThreeJSCanvas';
