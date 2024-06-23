@@ -118,13 +118,12 @@ export const drawText = (scene, textData) => {
     loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
         const geometry = new TextGeometry(textData.text, {
             font: font,
-            size: textData.size,
+            size: textData.height,
             height: 0,
         });
-        const material = new THREE.MeshBasicMaterial({ color: hexColorFromArray(textData.colour) });
-        const text = new THREE.Mesh(geometry, material);
-        text.position.set(textData.position.x, textData.position.y, 0);
-        text.rotation.z = THREE.MathUtils.degToRad(textData.rotation);
-        scene.add(text);
+        const material = new THREE.MeshBasicMaterial({ color: textData.colour });
+        const textMesh = new THREE.Mesh(geometry, material);
+        textMesh.position.set(textData.center[0], textData.center[1], 0);
+        scene.add(textMesh);
     });
 };

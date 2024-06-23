@@ -21,6 +21,7 @@ const DXFView = () => {
             canvasRef={canvasRef}
             views={pageState.views ? pageState.views : []}
             visibility={pageState.visibility ? pageState.visibility : []}
+            texts={pageState.texts ? pageState.texts[0] : null}
         />
         <CursorCoordinates className="cursor-coordinates" />
         <ViewToggle views={pageState.views} visibility={pageState.visibility} toggleView={handleToggleView} />

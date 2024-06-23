@@ -5,11 +5,11 @@ import { updateCursorPosition } from '../../../slices/cursorPositionSlice';
 import { createGrid } from './utils/grid';
 import { setupCameraControls } from './utils/cameraControls';
 import Highlight from './Highlight';
-import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline } from './utils/draw';
+import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline, drawText } from './utils/draw';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
-const ThreeJSCanvas = ({ canvasRef, views, visibility }) => {
+const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
     const localRef = useRef();
     const dispatch = useDispatch();
     const [renderer, setRenderer] = useState(null);
@@ -149,7 +149,40 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility }) => {
             }
             viewGroup.visible = visibility[index];
         });
-    }, [views, visibility]);
+
+        // Log texts to inspect
+        console.log('Texts:', JSON.stringify(texts, null, 2));
+
+// Check the type and presence of texts.mtexts
+        if (texts) {
+            console.log("Found texts:", texts);
+            console.log("texts.type:", typeof texts);
+            console.log("texts.texts:", texts.texts);
+            console.log("texts.mtexts:", texts.mtexts);
+            console.log("texts.mtexts type:", typeof texts.mtexts);
+
+            if (texts.texts) {
+                console.log("texts.texts is an array:", Array.isArray(texts.texts));
+                texts.texts.forEach(text => {
+                    drawText(scene.current, text);
+                });
+            }
+
+            if (texts.mtexts) {
+                console.log("texts.mtexts is an array:", Array.isArray(texts.mtexts));
+                console.log("texts.mtexts length:", texts.mtexts.length);
+                if (Array.isArray(texts.mtexts) && texts.mtexts.length > 0) {
+                    console.log("Found an mtext array!");
+                    texts.mtexts.forEach(mtext => {
+                        console.log("Drawing mtext:", mtext);
+                        drawText(scene.current, mtext);
+                    });
+                } else {
+                    console.log("texts.mtexts is not an array or is empty.");
+                }
+            }
+        }
+    }, [views, visibility, texts]);
 
     return (
         <div ref={canvasRef || localRef} className="threejs-canvas">

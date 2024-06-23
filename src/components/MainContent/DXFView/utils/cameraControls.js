@@ -9,13 +9,13 @@ export const setupCameraControls = (camera, domElement) => {
     controls.screenSpacePanning = true;  // Ensure panning in screen space
 
     // Set zoom limits
-    controls.minZoom = 0.5;  // Adjust the minimum zoom level as needed
-    controls.maxZoom = 3;    // Adjust the maximum zoom level as needed
+    controls.minZoom = 0.2;  // Adjust the minimum zoom level as needed
+    controls.maxZoom = 5;    // Adjust the maximum zoom level as needed
 
     // Set pan limits
     const panLimits = {
-        min: new THREE.Vector3(-500, -500, 0), // Adjust these values as needed
-        max: new THREE.Vector3(500, 500, 0),   // Adjust these values as needed
+        min: new THREE.Vector3(-700, -700, 0), // Adjust these values as needed
+        max: new THREE.Vector3(1000, 1000, 0),   // Adjust these values as needed
     };
 
     controls.addEventListener('change', () => {
