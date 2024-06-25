@@ -43,7 +43,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
         grid.position.set(0, 0, 0);
         scene.current.add(grid);
 
-        setupCameraControls(newCamera, newRenderer.domElement);
+        setupCameraControls(newCamera, newRenderer.domElement, { enableRotate: false });
 
         const handleMouseMove = (event) => {
             const rect = currentRef.current.getBoundingClientRect();

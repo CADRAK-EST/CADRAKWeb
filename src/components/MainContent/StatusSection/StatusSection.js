@@ -1,29 +1,29 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import './StatusSection.css';
-import { setPage } from '../../../slices/pageDataSlice';
 
 const StatusSection = () => {
-  const pages = useSelector((state) => state.parsedData.pages);
-  const dispatch = useDispatch();
   const selectedPage = useSelector((state) => state.pageData.selectedPage);
   const selectedFile = useSelector((state) => state.file.selectedFile);
 
-  const handlePageClick = (page) => {
-    dispatch(setPage(page));
+  const handleDownload = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(selectedPage, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    const filename = selectedPage?.metadata?.filename?.replace('.dxf', '.json') || 'data.json';
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", filename);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
   };
 
   return (
     <div className="status-section">
-      <h3>{selectedFile ? `Data for: ${selectedFile.name}` : 'No file loaded'}</h3>
+      <div className="status-header">
+        <h3>{selectedFile ? `Data for: ${selectedFile.name}` : 'No file loaded'}</h3>
+        {selectedPage && <button className="download-btn" onClick={handleDownload}>Download JSON</button>}
+      </div>
       <div className="status-content">
-        <div className="json-list">
-          {selectedFile && pages[selectedFile.name] && pages[selectedFile.name].map((page, index) => (
-            <div key={index} className="json-list-item" onClick={() => handlePageClick(page)}>
-              Page {index + 1}
-            </div>
-          ))}
-        </div>
         <div className="json-container">
           <pre>{selectedPage ? JSON.stringify(selectedPage, null, 2) : 'Select a page to view its data'}</pre>
         </div>

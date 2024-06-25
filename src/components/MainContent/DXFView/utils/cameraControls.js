@@ -1,8 +1,9 @@
 ﻿import * as THREE from 'three';
-import { MapControls } from 'three/examples/jsm/controls/MapControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-export const setupCameraControls = (camera, domElement) => {
-    const controls = new MapControls(camera, domElement);
+export const setupCameraControls = (camera, domElement, options = {}) => {
+    const controls = new OrbitControls(camera, domElement);
+    controls.enableRotate = options.enableRotate !== undefined ? options.enableRotate : true;
 
     // Enable panning
     controls.enablePan = true;
