@@ -152,29 +152,21 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
 
         // Log texts to inspect
         console.log('Texts:', JSON.stringify(texts, null, 2));
-
-// Check the type and presence of texts.mtexts
+        
         if (texts) {
-            console.log("Found texts:", texts);
-            console.log("texts.type:", typeof texts);
-            console.log("texts.texts:", texts.texts);
-            console.log("texts.mtexts:", texts.mtexts);
-            console.log("texts.mtexts type:", typeof texts.mtexts);
+            console.log("there are texts:", texts);
 
             if (texts.texts) {
-                console.log("texts.texts is an array:", Array.isArray(texts.texts));
                 texts.texts.forEach(text => {
                     drawText(scene.current, text);
                 });
             }
 
             if (texts.mtexts) {
-                console.log("texts.mtexts is an array:", Array.isArray(texts.mtexts));
-                console.log("texts.mtexts length:", texts.mtexts.length);
+                console.log("there are mtexts:", texts.mtexts);
                 if (Array.isArray(texts.mtexts) && texts.mtexts.length > 0) {
-                    console.log("Found an mtext array!");
                     texts.mtexts.forEach(mtext => {
-                        console.log("Drawing mtext:", mtext);
+                        console.log("mtext:", mtext);
                         drawText(scene.current, mtext);
                     });
                 } else {

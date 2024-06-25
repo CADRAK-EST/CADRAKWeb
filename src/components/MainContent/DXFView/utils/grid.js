@@ -1,8 +1,8 @@
 ﻿import * as THREE from 'three';
 
 export const createGrid = () => {
-    const size = 5000; // Grid size
-    const divisions = 100; // Number of divisions
+    const size = 10000; // Grid size
+    const divisions = 200; // Number of divisions
     const gridColor = 0xcccccc; // Lighter color for grid lines
 
     // Create grid
