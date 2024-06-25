@@ -5,6 +5,7 @@ import StatusSection from './StatusSection/StatusSection';
 import DXFView from './DXFView/DXFView';
 import useParsedData from '../../hooks/UseParsedData';
 import { setParsedData, clearParsedData } from '../../slices/parsedDataSlice';
+import { clearPage } from '../../slices/pageDataSlice';
 
 const MainContent = () => {
   const selectedFile = useSelector((state) => state.file.selectedFile);
@@ -13,9 +14,17 @@ const MainContent = () => {
 
   useEffect(() => {
     if (selectedFile) {
+      console.log('useEffect triggered', { selectedFile });
       dispatch(clearParsedData());
+      dispatch(clearPage());
+
+      if (!selectedFile.path) {
+        console.error('Selected file does not have a valid path:', selectedFile);
+        return;
+      }
 
       fetchParsedData(selectedFile.path, (pageData) => {
+        console.log('Dispatching setParsedData', { fileName: selectedFile.name, pageData });
         dispatch(setParsedData({ fileName: selectedFile.name, pageData }));
       });
     }
