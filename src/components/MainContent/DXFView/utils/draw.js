@@ -124,6 +124,15 @@ export const drawText = (scene, textData) => {
         const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(textData.color) });
         const textMesh = new THREE.Mesh(geometry, material);
         textMesh.position.set(textData.center[0], textData.center[1], 0);
+
+        // Rotation
+        if (textData.text_direction) {
+            const directionVector = new THREE.Vector3(...textData.text_direction);
+            const angle = Math.atan2(directionVector.y, directionVector.x);
+            textMesh.rotation.z = angle;
+        } else if (textData.rotation) {
+            textMesh.rotation.z = THREE.MathUtils.degToRad(textData.rotation);
+        }
         scene.add(textMesh);
     });
 };
