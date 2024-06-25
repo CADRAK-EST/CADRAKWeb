@@ -121,7 +121,7 @@ export const drawText = (scene, textData) => {
             size: textData.height,
             height: 0,
         });
-        const material = new THREE.MeshBasicMaterial({ color: textData.colour });
+        const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(textData.color) });
         const textMesh = new THREE.Mesh(geometry, material);
         textMesh.position.set(textData.center[0], textData.center[1], 0);
         scene.add(textMesh);

@@ -151,11 +151,10 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
         });
 
         // Log texts to inspect
-        console.log('Texts:', JSON.stringify(texts, null, 2));
+        // console.log('Texts:', JSON.stringify(texts, null, 2));
         
         if (texts) {
-            console.log("there are texts:", texts);
-
+            
             if (texts.texts) {
                 texts.texts.forEach(text => {
                     drawText(scene.current, text);
@@ -163,8 +162,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
             }
 
             if (texts.mtexts) {
-                console.log("there are mtexts:", texts.mtexts);
-                if (Array.isArray(texts.mtexts) && texts.mtexts.length > 0) {
+                if (texts.mtexts.length > 0) {
                     texts.mtexts.forEach(mtext => {
                         console.log("mtext:", mtext);
                         drawText(scene.current, mtext);
