@@ -13,7 +13,7 @@ const pageDataSlice = createSlice({
       state.selectedPage = action.payload;
       state.views = action.payload.views.map(view => ({ ...view, visible: true }));
       state.visibility = action.payload.views.map(() => true); // Initialize all views as visible
-      state.texts = action.payload.texts || { texts: [], mtexts: [] };
+      state.texts = action.payload.texts || { texts: [], mtexts: [], attdefs: [] };
     },
     clearPage: () => ({
       selectedPage: null,

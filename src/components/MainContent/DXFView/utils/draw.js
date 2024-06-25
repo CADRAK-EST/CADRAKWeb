@@ -119,11 +119,62 @@ export const drawText = (scene, textData) => {
         const geometry = new TextGeometry(textData.text, {
             font: font,
             size: textData.height,
-            height: 0,
+            depth: 0,
         });
         const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(textData.color) });
         const textMesh = new THREE.Mesh(geometry, material);
-        textMesh.position.set(textData.center[0], textData.center[1], 0);
+
+        // Calculate alignment offset
+        geometry.computeBoundingBox();
+        const boundingBox = geometry.boundingBox;
+
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // Apply the offset based on the attachment point
+        switch (textData.attachment_point) {
+            case 1: // MTEXT_TOP_LEFT
+                offsetX = -boundingBox.min.x;
+                offsetY = -boundingBox.max.y;
+                break;
+            case 2: // MTEXT_TOP_CENTER
+                offsetX = -0.5 * (boundingBox.max.x + boundingBox.min.x);
+                offsetY = -boundingBox.max.y;
+                break;
+            case 3: // MTEXT_TOP_RIGHT
+                offsetX = -boundingBox.max.x;
+                offsetY = -boundingBox.max.y;
+                break;
+            case 4: // MTEXT_MIDDLE_LEFT
+                offsetX = -boundingBox.min.x;
+                offsetY = -0.5 * (boundingBox.max.y + boundingBox.min.y);
+                break;
+            case 5: // MTEXT_MIDDLE_CENTER
+                offsetX = -0.5 * (boundingBox.max.x + boundingBox.min.x);
+                offsetY = -0.5 * (boundingBox.max.y + boundingBox.min.y);
+                break;
+            case 6: // MTEXT_MIDDLE_RIGHT
+                offsetX = -boundingBox.max.x;
+                offsetY = -0.5 * (boundingBox.max.y + boundingBox.min.y);
+                break;
+            case 7: // MTEXT_BOTTOM_LEFT
+                offsetX = -boundingBox.min.x;
+                offsetY = -boundingBox.min.y;
+                break;
+            case 8: // MTEXT_BOTTOM_CENTER
+                offsetX = -0.5 * (boundingBox.max.x + boundingBox.min.x);
+                offsetY = -boundingBox.min.y;
+                break;
+            case 9: // MTEXT_BOTTOM_RIGHT
+                offsetX = -boundingBox.max.x;
+                offsetY = -boundingBox.min.y;
+                break;
+            default:
+                break;
+        }
+
+        // Apply alignment offset to position
+        textMesh.position.set(textData.center[0] + offsetX, textData.center[1] + offsetY, 0);
 
         // Rotation
         if (textData.text_direction) {
@@ -134,5 +185,6 @@ export const drawText = (scene, textData) => {
             textMesh.rotation.z = THREE.MathUtils.degToRad(textData.rotation);
         }
         scene.add(textMesh);
+        return textMesh;
     });
 };
