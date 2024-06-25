@@ -171,6 +171,13 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
                     console.log("texts.mtexts is not an array or is empty.");
                 }
             }
+
+            if (texts.attdefs) {
+                texts.attdefs.forEach(attdefs => {
+                    drawText(scene.current, attdefs);
+                });
+            }
+            
         }
     }, [views, visibility, texts]);
 
