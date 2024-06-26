@@ -7,6 +7,7 @@ const pageDataSlice = createSlice({
     views: [],
     visibility: [],
     texts: { texts: [], mtexts: [] },// Store visibility of each view
+    metadata: {} // Add metadata to initial state
   },
   reducers: {
     setPage: (state, action) => {
@@ -14,12 +15,14 @@ const pageDataSlice = createSlice({
       state.views = action.payload.views.map(view => ({ ...view, visible: true }));
       state.visibility = action.payload.views.map(() => true); // Initialize all views as visible
       state.texts = action.payload.texts || { texts: [], mtexts: [], attdefs: [] };
+      state.metadata = action.payload.metadata || {}; // Set metadata
     },
     clearPage: () => ({
       selectedPage: null,
       views: [],
       visibility: [],
       texts: { texts: [], mtexts: [] },
+      metadata: {} // Clear metadata
     }),
     toggleView: (state, action) => {
       const viewIndex = action.payload;

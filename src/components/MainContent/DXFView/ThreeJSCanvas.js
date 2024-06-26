@@ -9,7 +9,7 @@ import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline, drawText } fr
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
-const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
+const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) => {
     const localRef = useRef();
     const dispatch = useDispatch();
     const [renderer, setRenderer] = useState(null);
@@ -31,6 +31,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
             1, 1000
         );
         newCamera.position.set(0, 0, 5);
+        newCamera.up.set(0, 1, 0); // Ensure camera up vector is set correctly
         setCamera(newCamera);
 
         const newRenderer = new THREE.WebGLRenderer({ antialias: true });
@@ -43,7 +44,8 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
         grid.position.set(0, 0, 0);
         scene.current.add(grid);
 
-        setupCameraControls(newCamera, newRenderer.domElement, { enableRotate: false });
+        // Setup camera controls with rotation disabled
+        const controls = setupCameraControls(newCamera, newRenderer.domElement);
 
         const handleMouseMove = (event) => {
             const rect = currentRef.current.getBoundingClientRect();
@@ -64,6 +66,8 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
 
         const animate = () => {
             requestAnimationFrame(animate);
+            // Lock camera's up vector to prevent unintended rotation
+            newCamera.up.set(0, 1, 0);
             newRenderer.render(scene.current, newCamera);
         };
         animate();
@@ -149,9 +153,6 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
             }
             viewGroup.visible = visibility[index];
         });
-
-        // Log texts to inspect
-        // console.log('Texts:', JSON.stringify(texts, null, 2));
         
         if (texts) {
             
@@ -178,6 +179,43 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts }) => {
                 });
             }
             
+        }
+
+        const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
+            const width = boundingBox.max.x - boundingBox.min.x;
+            const height = boundingBox.max.y - boundingBox.min.y;
+
+            const centerX = (boundingBox.max.x + boundingBox.min.x) / 2;
+            const centerY = (boundingBox.max.y + boundingBox.min.y) / 2;
+
+            const aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
+
+            let newWidth, newHeight;
+
+            if (width / aspect > height) {
+                newWidth = width;
+                newHeight = width / aspect;
+            } else {
+                newWidth = height * aspect;
+                newHeight = height;
+            }
+
+            camera.left = centerX - newWidth / 2;
+            camera.right = centerX + newWidth / 2;
+            camera.top = centerY + newHeight / 2;
+            camera.bottom = centerY - newHeight / 2;
+            
+            camera.updateProjectionMatrix();
+        };
+
+
+        // Adjust camera to fit the bounding box
+        if (views.length > 0 && metadata.bounding_box) {
+            const boundingBox = {
+                min: { x: metadata.bounding_box[0], y: metadata.bounding_box[1] },
+                max: { x: metadata.bounding_box[2], y: metadata.bounding_box[3] },
+            };
+            adjustCameraToBoundingBox(boundingBox, camera, renderer);
         }
     }, [views, visibility, texts]);
 
