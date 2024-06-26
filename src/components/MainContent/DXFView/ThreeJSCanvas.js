@@ -165,7 +165,6 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
             if (texts.mtexts) {
                 if (texts.mtexts.length > 0) {
                     texts.mtexts.forEach(mtext => {
-                        console.log("mtext:", mtext);
                         drawText(scene.current, mtext);
                     });
                 } else {
