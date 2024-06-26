@@ -5,7 +5,16 @@ import { updateCursorPosition } from '../../../slices/cursorPositionSlice';
 import { createGrid } from './utils/grid';
 import { setupCameraControls } from './utils/cameraControls';
 import Highlight from './Highlight';
-import { drawLine, drawCircle, drawArc, drawEllipse, drawPolyline, drawText } from './utils/draw';
+import {
+    drawLine,
+    drawCircle,
+    drawArc,
+    drawEllipse,
+    drawPolyline,
+    drawText,
+    initializeFonts,
+    resetFonts
+} from './utils/draw';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
 
@@ -97,6 +106,9 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         while (scene.current.children.length > 0) {
             scene.current.remove(scene.current.children[0]);
         }
+        // Clear the fonts
+        resetFonts();
+        console.log("Resetting fonts");
 
         // Add grid
         const grid = createGrid();
@@ -153,32 +165,36 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
             }
             viewGroup.visible = visibility[index];
         });
-        
-        if (texts) {
-            
-            if (texts.texts) {
-                texts.texts.forEach(text => {
-                    drawText(scene.current, text);
-                });
-            }
 
-            if (texts.mtexts) {
-                if (texts.mtexts.length > 0) {
-                    texts.mtexts.forEach(mtext => {
-                        drawText(scene.current, mtext);
+        initializeFonts().then(() => {
+            console.log("Fonts initialized");
+            
+            if (texts) {
+                
+                if (texts.texts) {
+                    texts.texts.forEach(text => {
+                        drawText(scene.current, text);
                     });
-                } else {
-                    console.log("texts.mtexts is not an array or is empty.");
                 }
+    
+                if (texts.mtexts) {
+                    if (texts.mtexts.length > 0) {
+                        texts.mtexts.forEach(mtext => {
+                            drawText(scene.current, mtext);
+                        });
+                    } else {
+                        console.log("texts.mtexts is not an array or is empty.");
+                    }
+                }
+    
+                if (texts.attdefs) {
+                    texts.attdefs.forEach(attdefs => {
+                        drawText(scene.current, attdefs);
+                    });
+                }
+                
             }
-
-            if (texts.attdefs) {
-                texts.attdefs.forEach(attdefs => {
-                    drawText(scene.current, attdefs);
-                });
-            }
-            
-        }
+        });
 
         const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
             const width = boundingBox.max.x - boundingBox.min.x;

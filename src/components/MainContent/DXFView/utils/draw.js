@@ -115,16 +115,41 @@ export const drawPolyline = (scene, polylineData) => {
 
 // Store loaded fonts to avoid reloading
 const loadedFonts = {};
+let availableFonts = null; // To store available fonts from the manifest
+const manifestPath = `${window.location.origin}/fonts/manifest.json`; // Path to the fonts manifest
+const fetchFontsManifest = async () => {
+    try {
+        const response = await fetch(manifestPath);
+        const data = await response.json();
+        return data.fonts;
+    } catch (error) {
+        console.error('Error fetching fonts manifest:', error);
+        return [];
+    }
+};
+export const initializeFonts = async () => {
+    if (!availableFonts) {
+        availableFonts = await fetchFontsManifest();
+    }
+};
 
-export const drawText = (scene, textData) => {
+export const resetFonts = () => {
+    availableFonts = null;
+};
+
+export const drawText = async (scene, textData) => {
     const loader = new FontLoader();
+    await initializeFonts(); // Ensure fonts are initialized
+
     let fontPath;
 
-    if (textData.font) {
+    if (textData.font && availableFonts.includes(textData.font.replace('.ttf', '.json'))) {
         fontPath = `${window.location.origin}/fonts/${textData.font.replace('.ttf', '.json')}`;
     } else {
         fontPath = `${window.location.origin}/fonts/tahoma.json`; // Default fallback font
     }
+
+    console.log('Attempting to load font from:', fontPath);
 
     // Check if the font is already loaded
     if (loadedFonts[fontPath]) {
