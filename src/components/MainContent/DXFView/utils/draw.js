@@ -143,8 +143,11 @@ export const drawText = async (scene, textData) => {
 
     let fontPath;
 
-    if (textData.font && availableFonts.includes(textData.font.replace('.ttf', '.json'))) {
-        fontPath = `${window.location.origin}/fonts/${textData.font.replace('.ttf', '.json')}`;
+    // Normalize font name to lowercase for comparison
+    const normalizedFontName = textData.font ? textData.font.toLowerCase().replace('.ttf', '.json') : '';
+    
+    if (normalizedFontName && availableFonts.includes(normalizedFontName)) {
+        fontPath = `${window.location.origin}/fonts/normalizedFontName}`;
     } else {
         fontPath = `${window.location.origin}/fonts/tahoma.json`; // Default fallback font
     }
