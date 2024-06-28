@@ -108,7 +108,6 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         }
         // Clear the fonts
         resetFonts();
-        console.log("Resetting fonts");
 
         // Add grid
         const grid = createGrid();
@@ -160,42 +159,42 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                             viewGroup.add(polylineMesh);
                         });
                     }
+
+                    initializeFonts().then(() => {
+
+                    if (view.texts) {
+                        console.log("Views.texts: " + view.texts);
+                        if (view.texts) {
+                            view.texts.forEach(text => {
+                                console.log("Drawing text: " + text);
+                                drawText(scene.current, text);
+                            });
+                        }
+
+                            // if (views.texts) {
+                            //     if (texts.mtexts.length > 0) {
+                            //         texts.mtexts.forEach(mtext => {
+                            //             drawText(scene.current, mtext);
+                            //         });
+                            //     } else {
+                            //         console.log("texts.mtexts is not an array or is empty.");
+                            //     }
+                            // }
+                            //
+                            // if (views.texts.attdefs) {
+                            //     texts.attdefs.forEach(attdefs => {
+                            //         drawText(scene.current, attdefs);
+                            //     });
+                            // }
+
+                        }
+                    });
                 }
                 scene.current.add(viewGroup);
             }
             viewGroup.visible = visibility[index];
         });
-
-        initializeFonts().then(() => {
-            console.log("Fonts initialized");
-            
-            if (texts) {
-                
-                if (texts.texts) {
-                    texts.texts.forEach(text => {
-                        drawText(scene.current, text);
-                    });
-                }
-    
-                if (texts.mtexts) {
-                    if (texts.mtexts.length > 0) {
-                        texts.mtexts.forEach(mtext => {
-                            drawText(scene.current, mtext);
-                        });
-                    } else {
-                        console.log("texts.mtexts is not an array or is empty.");
-                    }
-                }
-    
-                if (texts.attdefs) {
-                    texts.attdefs.forEach(attdefs => {
-                        drawText(scene.current, attdefs);
-                    });
-                }
-                
-            }
-        });
-
+        
         const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
             const width = boundingBox.max.x - boundingBox.min.x;
             const height = boundingBox.max.y - boundingBox.min.y;
