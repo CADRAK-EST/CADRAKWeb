@@ -17,6 +17,7 @@ import {
 } from './utils/draw';
 import ObjectClickHandler from './ObjectClickHandler';
 import './DXFView.css';
+import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
 
 const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) => {
     const localRef = useRef();
@@ -26,6 +27,16 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
     const scene = useRef(new THREE.Scene());
     const initialSetupRef = useRef(false);
 
+    // Function to clear the scene except for the grid
+    const clearScene = () => {
+        const grid = scene.current.children.find(child => child.name === 'grid');
+        scene.current.children = grid ? [grid] : [];
+    };
+
+    useEffect(() => {
+        window.clearScene = clearScene; // Make clearScene globally accessible
+    }, []);
+    
     useEffect(() => {
         if (initialSetupRef.current) return;
         initialSetupRef.current = true;
@@ -49,12 +60,10 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         currentRef.current.appendChild(newRenderer.domElement);
         setRenderer(newRenderer);
 
-        const grid = createGrid();
-        grid.position.set(0, 0, 0);
-        scene.current.add(grid);
-
-        // Setup camera controls with rotation disabled
-        const controls = setupCameraControls(newCamera, newRenderer.domElement);
+        // const grid = createGrid();
+        // grid.position.set(0, 0, 0);
+        // scene.current.add(grid);
+        
 
         const handleMouseMove = (event) => {
             const rect = currentRef.current.getBoundingClientRect();
@@ -102,16 +111,22 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
     }, [canvasRef, dispatch]);
 
     useEffect(() => {
+        console.log("I got called!")
+        let viewGroups = scene.current.children.filter(child => child.name && child.name.startsWith('view-'));
+        viewGroups.forEach(viewGroup => { console.log("A view group: " + viewGroup); });
         // Clear old objects from scene
-        while (scene.current.children.length > 0) {
-            scene.current.remove(scene.current.children[0]);
-        }
-        // Clear the fonts
+        viewGroups.forEach((viewGroup) => {
+            if (!viewGroup.visible) {
+                scene.current.remove(viewGroup);
+            }
+        })
+        viewGroups.forEach(viewGroup => { console.log("Viewgroups now: " + viewGroup); });
+        
         resetFonts();
 
-        // Add grid
-        const grid = createGrid();
-        scene.current.add(grid);
+        // // Add grid
+        // const grid = createGrid();
+        // scene.current.add(grid);
 
         // Draw new objects based on views
         views.forEach((view, index) => {
@@ -161,32 +176,10 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                     }
 
                     initializeFonts().then(() => {
-
-                    if (view.texts) {
-                        console.log("Views.texts: " + view.texts);
                         if (view.texts) {
                             view.texts.forEach(text => {
-                                console.log("Drawing text: " + text);
-                                drawText(scene.current, text);
+                                addTextMesh(text, viewGroup);
                             });
-                        }
-
-                            // if (views.texts) {
-                            //     if (texts.mtexts.length > 0) {
-                            //         texts.mtexts.forEach(mtext => {
-                            //             drawText(scene.current, mtext);
-                            //         });
-                            //     } else {
-                            //         console.log("texts.mtexts is not an array or is empty.");
-                            //     }
-                            // }
-                            //
-                            // if (views.texts.attdefs) {
-                            //     texts.attdefs.forEach(attdefs => {
-                            //         drawText(scene.current, attdefs);
-                            //     });
-                            // }
-
                         }
                     });
                 }
@@ -194,6 +187,21 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
             }
             viewGroup.visible = visibility[index];
         });
+        
+        const addTextMesh = async (textData, viewGroup) => {
+            try {
+                const textMesh = await drawText(scene.current, textData);
+                if (textMesh.geometry instanceof TextGeometry) {
+                    textMesh.userData = { isText: true };
+                    scene.current.add(textMesh);
+                    viewGroup.add(textMesh);
+                } else {
+                    console.error('Invalid object type:', textMesh);
+                }
+            } catch (error) {
+                console.error('Error creating text mesh:', error);
+            }
+        }
         
         const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
             const width = boundingBox.max.x - boundingBox.min.x;

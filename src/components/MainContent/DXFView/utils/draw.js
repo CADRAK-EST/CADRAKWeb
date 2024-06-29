@@ -145,33 +145,36 @@ export const drawText = async (scene, textData) => {
 
     // Normalize font name to lowercase for comparison
     const normalizedFontName = textData.font ? textData.font.toLowerCase().replace('.ttf', '.json') : '';
-    
+
     if (normalizedFontName && availableFonts.includes(normalizedFontName)) {
-        fontPath = `${window.location.origin}/fonts/normalizedFontName}`;
+        fontPath = `${window.location.origin}/fonts/${normalizedFontName}`;
     } else {
         fontPath = `${window.location.origin}/fonts/tahoma.json`; // Default fallback font
     }
+    
 
-    console.log('Attempting to load font from:', fontPath);
-
-    // Check if the font is already loaded
-    if (loadedFonts[fontPath]) {
-        createTextMesh(loadedFonts[fontPath], textData, scene);
-    } else {
-        // Load the font and cache it
-        loader.load(
-            fontPath,
-            (font) => {
-                console.log('Font loaded successfully:', fontPath);
-                loadedFonts[fontPath] = font;
-                createTextMesh(font, textData, scene);
-            },
-            undefined,
-            (error) => {
-                console.error('Error loading font:', error);
-            }
-        );
-    }
+    return new Promise((resolve, reject) => {
+        // Check if the font is already loaded
+        if (loadedFonts[fontPath]) {
+            const textMesh = createTextMesh(loadedFonts[fontPath], textData, scene);
+            resolve(textMesh);
+        } else {
+            // Load the font and cache it
+            loader.load(
+                fontPath,
+                (font) => {
+                    loadedFonts[fontPath] = font;
+                    const textMesh = createTextMesh(font, textData, scene);
+                    resolve(textMesh);
+                },
+                undefined,
+                (error) => {
+                    console.error('Error loading font:', error);
+                    reject(error);
+                }
+            );
+        }
+    });
 };
 
 const createTextMesh = (font, textData, scene) => {

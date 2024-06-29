@@ -24,7 +24,6 @@ const MainContent = () => {
       }
 
       fetchParsedData(selectedFile.path, (pageData) => {
-        console.log('Dispatching setParsedData', { fileName: selectedFile.name, pageData });
         dispatch(setParsedData({ fileName: selectedFile.name, pageData }));
       });
     }

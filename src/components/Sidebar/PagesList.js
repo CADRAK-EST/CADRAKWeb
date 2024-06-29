@@ -9,6 +9,9 @@ const PagesList = () => {
   const selectedFile = useSelector((state) => state.file.selectedFile);
 
   const handlePageClick = (page) => {
+    if (window.clearScene) {
+      window.clearScene(); // Call clearScene
+    }
     dispatch(setPage(page));
   };
 
