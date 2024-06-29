@@ -63,7 +63,9 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         // const grid = createGrid();
         // grid.position.set(0, 0, 0);
         // scene.current.add(grid);
-        
+
+        // Setup camera controls with rotation disabled
+        const controls = setupCameraControls(newCamera, newRenderer.domElement);
 
         const handleMouseMove = (event) => {
             const rect = currentRef.current.getBoundingClientRect();
@@ -121,8 +123,6 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
             }
         })
         viewGroups.forEach(viewGroup => { console.log("Viewgroups now: " + viewGroup); });
-        
-        resetFonts();
 
         // // Add grid
         // const grid = createGrid();
@@ -175,6 +175,8 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                         });
                     }
 
+                    // Clear the fonts
+                    resetFonts();
                     initializeFonts().then(() => {
                         if (view.texts) {
                             view.texts.forEach(text => {

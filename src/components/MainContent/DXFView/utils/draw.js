@@ -168,7 +168,7 @@ export const drawText = async (scene, textData) => {
                     resolve(textMesh);
                 },
                 undefined,
-                (error) => {
+                error => {
                     console.error('Error loading font:', error);
                     reject(error);
                 }
@@ -177,12 +177,22 @@ export const drawText = async (scene, textData) => {
     });
 };
 
+// Cache text geometries
+const textGeometryCache = {};
+
 const createTextMesh = (font, textData, scene) => {
-    const geometry = new TextGeometry(textData.text, {
-        font: font,
-        size: textData.height,
-        depth: 0,
-    });
+    const cacheKey = `${textData.text}-${textData.height}-${textData.font}`;
+    let geometry = textGeometryCache[cacheKey];
+
+    if (!geometry) {
+        geometry = new TextGeometry(textData.text, {
+            font: font,
+            size: textData.height,
+            depth: 0,
+        });
+        textGeometryCache[cacheKey] = geometry; // Cache the geometry
+    }
+    
     const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(textData.color) });
     const textMesh = new THREE.Mesh(geometry, material);
 
