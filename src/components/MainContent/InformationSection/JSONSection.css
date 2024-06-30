@@ -1,32 +1,25 @@
 @import '../../../global.css';
 
-.status-section {
-  height: 40%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  border-top: var(--border-style);
+.json-section {
+  flex: 0 0 80%;
   padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow-y: auto;
+  background-color: var(--background-color);
   box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-  .status-section {
-    height: auto;
-  }
 }
 
 .status-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin-bottom: 1rem; /* Add margin to separate from JSON container */
+  margin-bottom: 0.5rem;
 }
 
 .download-btn {
-  padding: 10px 20px;
+  padding: 10px 10px;
   font-size: 14px;
   cursor: pointer;
   background-color: var(--secondary-color);
@@ -42,24 +35,9 @@
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
-.status-section h3 {
-  margin-bottom: 1rem;
-}
-
-.status-content {
-  display: flex;
-  width: 100%;
-  height: calc(100% - 40px);
-}
-
 .json-container {
-  width: 100%;
-  height: calc(100% - 40px);
   overflow-y: auto;
-  background-color: var(--background-color);
   padding: 0.5rem;
-  box-shadow: var(--shadow);
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
-  box-sizing: border-box;
 }

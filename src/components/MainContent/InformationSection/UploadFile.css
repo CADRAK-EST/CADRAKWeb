@@ -1,25 +1,21 @@
-@import '../../global.css';
+@import '../../../global.css';
 
 .upload-file {
+  flex: 0 0 10%;
   padding: 1rem;
+  border: 1px solid var(--border-color);
   background-color: var(--background-color);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
-  height: 8%;
-}
-
-.upload-file h2 {
-  font-size: 24px;
-  margin-bottom: 1rem;
-  text-align: center;
+  box-sizing: border-box;
 }
 
 .upload-btn {
-  padding: 10px 20px; 
+  padding: 10px 10px;
   font-size: 24px;
   width: 100%;
   box-sizing: border-box;
