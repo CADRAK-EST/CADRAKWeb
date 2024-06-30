@@ -1,9 +1,12 @@
 ﻿import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-export const setupCameraControls = (camera, domElement, options = {}) => {
+export const setupCameraControls = (camera, domElement, initialTarget = new THREE.Vector3(0, 0, 0)) => {
     const controls = new OrbitControls(camera, domElement);
     controls.enableRotate = false;
+
+    // Set the initial target
+    controls.target.copy(initialTarget);
 
     // Enable panning
     controls.enablePan = true;
@@ -26,6 +29,8 @@ export const setupCameraControls = (camera, domElement, options = {}) => {
         RIGHT: THREE.MOUSE.PAN // Optional: use right mouse button for panning as well
     };
 
+    const fixedZ = camera.position.z; // Store the initial z-coordinate
+
     controls.addEventListener('change', () => {
         // Restrict panning
         controls.target.x = Math.max(panLimits.min.x, Math.min(panLimits.max.x, controls.target.x));
@@ -35,9 +40,15 @@ export const setupCameraControls = (camera, domElement, options = {}) => {
         camera.position.x = Math.max(panLimits.min.x, Math.min(panLimits.max.x, camera.position.x));
         camera.position.y = Math.max(panLimits.min.y, Math.min(panLimits.max.y, camera.position.y));
 
+        // // Ensure the z-coordinate remains fixed
+        camera.position.z = fixedZ;
+
         // Restrict zooming
         camera.zoom = Math.max(controls.minZoom, Math.min(controls.maxZoom, camera.zoom));
         camera.updateProjectionMatrix();
+
+        // Ensure rotation around the y-axis is 0
+        camera.rotation.y = 0;
     });
 
     // Disable damping for instant panning effect

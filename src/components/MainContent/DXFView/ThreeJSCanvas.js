@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateCursorPosition } from '../../../slices/cursorPositionSlice';
 import { createGrid } from './utils/grid';
+import { setPageLoaded } from '../../../slices/pageDataSlice';
 import { setupCameraControls } from './utils/cameraControls';
 import Highlight from './Highlight';
 import {
@@ -26,6 +27,9 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
     const [camera, setCamera] = useState(null);
     const scene = useRef(new THREE.Scene());
     const initialSetupRef = useRef(false);
+    const [controls, setControls] = useState(null);
+
+    const isPageLoaded = useSelector((state) => state.pageData.isPageLoaded);
 
     // Function to clear the scene except for the grid
     const clearScene = () => {
@@ -64,8 +68,11 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         // grid.position.set(0, 0, 0);
         // scene.current.add(grid);
 
-        // Setup camera controls with rotation disabled
-        const controls = setupCameraControls(newCamera, newRenderer.domElement);
+
+        // Initialize controls with the initial target at the center
+        const initialTarget = new THREE.Vector3(0, 0, 0);
+        const newControls = setupCameraControls(newCamera, newRenderer.domElement, initialTarget);
+        setControls(newControls);
 
         const handleMouseMove = (event) => {
             const rect = currentRef.current.getBoundingClientRect();
@@ -87,7 +94,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         const animate = () => {
             requestAnimationFrame(animate);
             // Lock camera's up vector to prevent unintended rotation
-            newCamera.up.set(0, 1, 0);
+            // newCamera.up.set(0, 1, 0);
             newRenderer.render(scene.current, newCamera);
         };
         animate();
@@ -204,7 +211,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 console.error('Error creating text mesh:', error);
             }
         }
-        
+
         const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
             const width = boundingBox.max.x - boundingBox.min.x;
             const height = boundingBox.max.y - boundingBox.min.y;
@@ -224,24 +231,38 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 newHeight = height;
             }
 
-            camera.left = centerX - newWidth / 2;
-            camera.right = centerX + newWidth / 2;
-            camera.top = centerY + newHeight / 2;
-            camera.bottom = centerY - newHeight / 2;
-            
+            // // Center the camera
+            camera.position.set(centerX, centerY, camera.position.z);
+
+            // Adjust the camera zoom to fit the bounding box
+            const zoomFactor = Math.min(
+                renderer.domElement.clientWidth / newWidth,
+                renderer.domElement.clientHeight / newHeight
+            );
+
+            controls.target = new THREE.Vector3(centerX, centerY, 5);
+
+            camera.zoom = zoomFactor;
             camera.updateProjectionMatrix();
+
+            if (controls) {
+                controls.target.set(centerX, centerY, 0);
+                controls.update();
+            }
         };
 
 
         // Adjust camera to fit the bounding box
-        if (views.length > 0 && metadata.bounding_box) {
+        if (views.length > 0 && metadata.bounding_box && !isPageLoaded) {
             const boundingBox = {
                 min: { x: metadata.bounding_box[0], y: metadata.bounding_box[1] },
                 max: { x: metadata.bounding_box[2], y: metadata.bounding_box[3] },
             };
+            
             adjustCameraToBoundingBox(boundingBox, camera, renderer);
+            dispatch(setPageLoaded()); // Set the page loaded state to true
         }
-    }, [views, visibility, texts]);
+    }, [views, visibility, texts, isPageLoaded, dispatch]);
 
     return (
         <div ref={canvasRef || localRef} className="threejs-canvas">

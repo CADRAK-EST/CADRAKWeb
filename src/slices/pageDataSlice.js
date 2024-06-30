@@ -7,7 +7,8 @@ const pageDataSlice = createSlice({
     views: [],
     visibility: [],
     texts: { texts: [], mtexts: [] },// Store visibility of each view
-    metadata: {} // Add metadata to initial state
+    metadata: {}, // Add metadata to initial state
+    isPageLoaded: false
   },
   reducers: {
     setPage: (state, action) => {
@@ -16,13 +17,15 @@ const pageDataSlice = createSlice({
       state.visibility = action.payload.views.map(() => true); // Initialize all views as visible
       state.texts = action.payload.texts || { texts: [], mtexts: [], attdefs: [] };
       state.metadata = action.payload.metadata || {}; // Set metadata
+      state.isPageLoaded = false
     },
     clearPage: () => ({
       selectedPage: null,
       views: [],
       visibility: [],
       texts: { texts: [], mtexts: [] },
-      metadata: {} // Clear metadata
+      metadata: {}, // Clear metadata
+      isPageLoaded: false
     }),
     toggleView: (state, action) => {
       const viewIndex = action.payload;
@@ -31,9 +34,12 @@ const pageDataSlice = createSlice({
       } else {
         console.warn('Attempted to toggle a view that does not exist:', viewIndex);
       }
-    }
+    },
+    setPageLoaded: (state) => {
+      state.isPageLoaded = true;
+    },
   },
 });
 
-export const { setPage, clearPage, toggleView } = pageDataSlice.actions;
+export const { setPage, clearPage, toggleView, setPageLoaded } = pageDataSlice.actions;
 export default pageDataSlice.reducer;
