@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './MainContent.css';
 import InformationSection from './InformationSection/InformationSection';
@@ -12,20 +12,24 @@ const MainContent = () => {
   const selectedPage = useSelector((state) => state.pageData.selectedPage);
   const dispatch = useDispatch();
   const fetchParsedData = useParsedData();
+  const isFetching = useRef(false);
 
   useEffect(() => {
-    if (selectedFile) {
+    if (selectedFile && !isFetching.current) {
+      isFetching.current = true;
       console.log('useEffect triggered', { selectedFile });
       dispatch(clearParsedData());
       dispatch(clearPage());
 
       if (!selectedFile.path) {
         console.error('Selected file does not have a valid path:', selectedFile);
+        isFetching.current = false;
         return;
       }
 
       fetchParsedData(selectedFile.path, (pageData) => {
         dispatch(setParsedData({ fileName: selectedFile.name, pageData }));
+        isFetching.current = false;
       });
     }
   }, [selectedFile, fetchParsedData, dispatch]);

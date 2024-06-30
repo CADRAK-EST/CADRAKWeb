@@ -28,6 +28,7 @@ export const parseData = async (filePath, onNewPage) => {
       if (chunk) {
         try {
           const pageData = JSON.parse(chunk);
+          console.log('Parsed page data:', pageData);
           onNewPage(pageData);
         } catch (e) {
           console.error('Error parsing chunk:', chunk, e);

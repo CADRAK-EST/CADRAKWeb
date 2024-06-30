@@ -23,6 +23,7 @@ const UploadFile = () => {
 
       // Fetch parsed data
       fetchParsedData(file.path, (pageData) => {
+        console.log('Dispatching parsed page data:', pageData);
         dispatch(setParsedData({ fileName: file.name, pageData }));
       });
     }

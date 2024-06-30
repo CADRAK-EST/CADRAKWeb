@@ -11,7 +11,9 @@ const parsedDataSlice = createSlice({
       if (!state.pages[fileName]) {
         state.pages[fileName] = [];
       }
+      console.log(`Adding page data for file: ${fileName}`, pageData);
       state.pages[fileName].push(pageData);
+      console.log(`Current pages for file: ${fileName}`, state.pages[fileName]);
     },
     clearParsedData: () => ({
       pages: {},
