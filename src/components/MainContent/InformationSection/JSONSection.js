@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import './StatusSection.css';
+import './JSONSection.css';
 
-const StatusSection = () => {
+const JSONSection = () => {
   const selectedPage = useSelector((state) => state.pageData.selectedPage);
   const selectedFile = useSelector((state) => state.file.selectedFile);
 
@@ -18,7 +18,7 @@ const StatusSection = () => {
   };
 
   return (
-    <div className="status-section">
+    <div className="json-section">
       <div className="status-header">
         <h3>{selectedFile ? `Data for: ${selectedFile.name}` : 'No file loaded'}</h3>
         {selectedPage && <button className="download-btn" onClick={handleDownload}>Download JSON</button>}
@@ -32,4 +32,4 @@ const StatusSection = () => {
   );
 };
 
-export default StatusSection;
+export default JSONSection;

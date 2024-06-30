@@ -1,22 +1,23 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './PagesList.css';
-import { setPage } from '../../slices/pageDataSlice';
+import { setPage } from '../../../slices/pageDataSlice';
 
-const PagesList = () => {
+const PagesList = ({ onPageClick }) => {
   const pages = useSelector((state) => state.parsedData.pages);
   const dispatch = useDispatch();
   const selectedFile = useSelector((state) => state.file.selectedFile);
 
   const handlePageClick = (page) => {
     if (window.clearScene) {
-      window.clearScene(); // Call clearScene
+      window.clearScene();
     }
     dispatch(setPage(page));
+    if (onPageClick) onPageClick(page);
   };
 
   return (
-    <div className="pages-list">
+    <div className="pages-list-section">
       <h2>Pages</h2>
       {selectedFile && pages[selectedFile.name] ? (
         <ul>

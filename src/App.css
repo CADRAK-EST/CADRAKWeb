@@ -3,17 +3,11 @@
 .App {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
   height: 100vh;
+  width: 100%;
   overflow: hidden;
   background-color: var(--background-color);
-}
-
-.content {
-  display: flex;
-  flex-grow: 1;
-  overflow: hidden;
-  flex-direction: row;
-  width: 100%;
 }
 
 .app-container {

@@ -3,8 +3,13 @@ import './Header.css';
 
 const Header = () => (
   <header className="header">
-    <img src={`${process.env.PUBLIC_URL}/CADRAK Logo.png`} alt="CADRAK Logo" className="logo" />
-    <h1>DXF Checker</h1>
+    <nav className="nav">
+      <ul>
+        <li><a href="#viewer">Viewer</a></li>
+        <li><a href="#files">Files</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
   </header>
 );
 
