@@ -269,7 +269,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                     max: new THREE.Vector3(boundingBox.max.x + panLimitBuffer, boundingBox.max.y + panLimitBuffer, 0)
                 };
                 controls.minZoom = zoomFactor / 2; // Example: half of the fitted zoom
-                controls.maxZoom = zoomFactor * 4; // Example: double of the fitted zoom
+                controls.maxZoom = zoomFactor * 8; // Example: double of the fitted zoom
 
                 controls.update();
             }
