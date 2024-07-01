@@ -1,7 +1,7 @@
 ﻿import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-export const setupCameraControls = (camera, domElement, initialTarget = new THREE.Vector3(0, 0, 0)) => {
+export const setupCameraControls = (camera, domElement, initialTarget = new THREE.Vector3(0, 0, 0), panLimits = {}, zoomLimits = {}) => {
     const controls = new OrbitControls(camera, domElement);
     controls.enableRotate = false;
 
@@ -13,15 +13,15 @@ export const setupCameraControls = (camera, domElement, initialTarget = new THRE
     controls.screenSpacePanning = true;  // Ensure panning in screen space
 
     // Set zoom limits
-    controls.minZoom = 0.4;  // Adjust the minimum zoom level as needed
-    controls.maxZoom = 5;    // Adjust the maximum zoom level as needed
+    controls.minZoom = zoomLimits.min || 0.4;  // Default minimum zoom level
+    controls.maxZoom = zoomLimits.max || 5;    // Default maximum zoom level
 
     // Set pan limits
-    const panLimits = {
-        min: new THREE.Vector3(-700, -700, 0), // Adjust these values as needed
-        max: new THREE.Vector3(1200, 1200, 0),   // Adjust these values as needed
+    controls.panLimits = {
+        min: panLimits.min || new THREE.Vector3(-700, -700, 0), // Default values
+        max: panLimits.max || new THREE.Vector3(1200, 1200, 0), // Default values
     };
-    
+
     // Change mouse button assignments
     controls.mouseButtons = {
         LEFT: THREE.MOUSE.PAN, // Use left mouse button for panning
@@ -33,14 +33,14 @@ export const setupCameraControls = (camera, domElement, initialTarget = new THRE
 
     controls.addEventListener('change', () => {
         // Restrict panning
-        controls.target.x = Math.max(panLimits.min.x, Math.min(panLimits.max.x, controls.target.x));
-        controls.target.y = Math.max(panLimits.min.y, Math.min(panLimits.max.y, controls.target.y));
+        controls.target.x = Math.max(controls.panLimits.min.x, Math.min(controls.panLimits.max.x, controls.target.x));
+        controls.target.y = Math.max(controls.panLimits.min.y, Math.min(controls.panLimits.max.y, controls.target.y));
 
         // Restrict camera position
-        camera.position.x = Math.max(panLimits.min.x, Math.min(panLimits.max.x, camera.position.x));
-        camera.position.y = Math.max(panLimits.min.y, Math.min(panLimits.max.y, camera.position.y));
+        camera.position.x = Math.max(controls.panLimits.min.x, Math.min(controls.panLimits.max.x, camera.position.x));
+        camera.position.y = Math.max(controls.panLimits.min.y, Math.min(controls.panLimits.max.y, camera.position.y));
 
-        // // Ensure the z-coordinate remains fixed
+        // Ensure the z-coordinate remains fixed
         camera.position.z = fixedZ;
 
         // Restrict zooming
@@ -57,7 +57,6 @@ export const setupCameraControls = (camera, domElement, initialTarget = new THRE
     // Ensure rotation is completely disabled
     controls.maxPolarAngle = Math.PI / 2;
     controls.minPolarAngle = Math.PI / 2;
-
 
     return controls;
 };

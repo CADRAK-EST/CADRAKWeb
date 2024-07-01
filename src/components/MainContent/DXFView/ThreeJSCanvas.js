@@ -7,6 +7,7 @@ import { setPageLoaded } from '../../../slices/pageDataSlice';
 import { setupCameraControls } from './utils/cameraControls';
 import Highlight from './Highlight';
 import {
+    drawSolid,
     drawLine,
     drawCircle,
     drawArc,
@@ -119,17 +120,38 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         };
     }, [canvasRef, dispatch]);
 
+    const addShape = (shapeData, viewGroup, func) => {
+        shapeData.forEach(shape => {
+            const shapeMesh = func(scene.current, shape);
+            shapeMesh.userData = shape;
+            viewGroup.add(shapeMesh);
+        });
+    }
+
+    const addTextMesh = async (textData, viewGroup) => {
+        try {
+            const textMesh = await drawText(scene.current, textData);
+            if (textMesh.geometry instanceof TextGeometry) {
+                textMesh.userData = { isText: true };
+                scene.current.add(textMesh);
+                viewGroup.add(textMesh);
+            } else {
+                console.error('Invalid object type:', textMesh);
+            }
+        } catch (error) {
+            console.error('Error creating text mesh:', error);
+        }
+    }
+
     useEffect(() => {
         console.log("I got called!")
         let viewGroups = scene.current.children.filter(child => child.name && child.name.startsWith('view-'));
-        viewGroups.forEach(viewGroup => { console.log("A view group: " + viewGroup); });
         // Clear old objects from scene
         viewGroups.forEach((viewGroup) => {
             if (!viewGroup.visible) {
                 scene.current.remove(viewGroup);
             }
         })
-        viewGroups.forEach(viewGroup => { console.log("Viewgroups now: " + viewGroup); });
 
         // // Add grid
         // const grid = createGrid();
@@ -142,44 +164,25 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 viewGroup = new THREE.Group();
                 viewGroup.name = `view-${index}`;
                 if (view.contours) {
-                    if (view.contours.lines) {
-                        view.contours.lines.forEach(line => {
-                            const lineMesh = drawLine(scene.current, line);
-                            lineMesh.userData = line;
-                            viewGroup.add(lineMesh);
-                        });
+                    let contours = view.contours;
+                    if (contours.lines) {
+                        addShape(contours.lines, viewGroup, drawLine);
                     }
 
-                    if (view.contours.circles) {
-                        view.contours.circles.forEach(circle => {
-                            const circleMesh = drawCircle(scene.current, circle);
-                            circleMesh.userData = circle;
-                            viewGroup.add(circleMesh);
-                        });
+                    if (contours.circles) {
+                        addShape(contours.circles, viewGroup, drawCircle)
                     }
 
-                    if (view.contours.arcs) {
-                        view.contours.arcs.forEach(arc => {
-                            const arcMesh = drawArc(scene.current, arc);
-                            arcMesh.userData = arc;
-                            viewGroup.add(arcMesh);
-                        });
+                    if (contours.arcs) {
+                        addShape(contours.arcs, viewGroup, drawArc);
                     }
 
-                    if (view.contours.ellipses) {
-                        view.contours.ellipses.forEach(ellipse => {
-                            const ellipseMesh = drawEllipse(scene.current, ellipse);
-                            ellipseMesh.userData = ellipse;
-                            viewGroup.add(ellipseMesh);
-                        });
+                    if (contours.ellipses) {
+                        addShape(contours.ellipses, viewGroup, drawEllipse)
                     }
 
-                    if (view.contours.polylines) {
-                        view.contours.polylines.forEach(polyline => {
-                            const polylineMesh = drawPolyline(scene.current, polyline);
-                            polylineMesh.userData = polyline;
-                            viewGroup.add(polylineMesh);
-                        });
+                    if (contours.polylines) {
+                        addShape(contours.polylines, viewGroup, drawPolyline)
                     }
 
                     // Clear the fonts
@@ -191,26 +194,35 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                             });
                         }
                     });
+                    
+                }
+
+                if (view.dimensions) {
+                    view.dimensions.forEach(dimension => {
+                        let contours = dimension.contours;
+                        if (contours.lines) {
+                            addShape(contours.lines, viewGroup, drawLine);
+                        }
+                        if (contours.solids) {
+                            addShape(contours.solids, viewGroup, drawSolid);
+                        }
+                        if (dimension.texts) {
+                            Object.entries(dimension.texts).forEach(textType => {
+                                if (textType.length > 0 && textType[1].length > 0) {
+                                    textType.forEach(text => {
+                                            addTextMesh(text, viewGroup);
+                                    });
+                                } else {
+                                    console.log("textType is empty")
+                                }
+                            });
+                        }
+                    })
                 }
                 scene.current.add(viewGroup);
             }
             viewGroup.visible = visibility[index];
         });
-        
-        const addTextMesh = async (textData, viewGroup) => {
-            try {
-                const textMesh = await drawText(scene.current, textData);
-                if (textMesh.geometry instanceof TextGeometry) {
-                    textMesh.userData = { isText: true };
-                    scene.current.add(textMesh);
-                    viewGroup.add(textMesh);
-                } else {
-                    console.error('Invalid object type:', textMesh);
-                }
-            } catch (error) {
-                console.error('Error creating text mesh:', error);
-            }
-        }
 
         const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
             if (!camera || !renderer) return;
@@ -233,7 +245,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 newHeight = height;
             }
 
-            // // Center the camera
+            // Center the camera
             camera.position.set(centerX, centerY, camera.position.z);
 
             // Adjust the camera zoom to fit the bounding box
@@ -242,13 +254,23 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 renderer.domElement.clientHeight / newHeight
             );
 
-            controls.target = new THREE.Vector3(centerX, centerY, 5);
+            controls.target = new THREE.Vector3(centerX, centerY, 0);
 
             camera.zoom = zoomFactor;
             camera.updateProjectionMatrix();
 
             if (controls) {
                 controls.target.set(centerX, centerY, 0);
+
+                // Update panning and zoom limits
+                const panLimitBuffer = 100;
+                controls.panLimits = {
+                    min: new THREE.Vector3(boundingBox.min.x - panLimitBuffer, boundingBox.min.y - panLimitBuffer, 0),
+                    max: new THREE.Vector3(boundingBox.max.x + panLimitBuffer, boundingBox.max.y + panLimitBuffer, 0)
+                };
+                controls.minZoom = zoomFactor / 2; // Example: half of the fitted zoom
+                controls.maxZoom = zoomFactor * 4; // Example: double of the fitted zoom
+
                 controls.update();
             }
         };
