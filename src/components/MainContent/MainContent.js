@@ -27,12 +27,12 @@ const MainContent = () => {
         return;
       }
 
-      fetchParsedData(selectedFile.path, (pageData) => {
-        dispatch(setParsedData({ fileName: selectedFile.name, pageData }));
-        isFetching.current = false;
-      });
+      //fetchParsedData(selectedFile.path, (pageData) => {
+      //  dispatch(setParsedData({ fileName: selectedFile.name, pageData }));
+      //  isFetching.current = false;
+      //});
     }
-  }, [selectedFile, fetchParsedData, dispatch]);
+  }, [selectedFile, /*fetchParsedData,*/ dispatch]);
 
   const handlePageClick = (page) => {
     if (window.clearScene) {
