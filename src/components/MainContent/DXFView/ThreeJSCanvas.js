@@ -164,24 +164,25 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 viewGroup = new THREE.Group();
                 viewGroup.name = `view-${index}`;
                 if (view.contours) {
-                    if (view.contours.lines) {
-                        addShape(view.contours.lines, viewGroup, drawLine);
+                    let contours = view.contours;
+                    if (contours.lines) {
+                        addShape(contours.lines, viewGroup, drawLine);
                     }
 
-                    if (view.contours.circles) {
-                        addShape(view.contours.circles, viewGroup, drawCircle)
+                    if (contours.circles) {
+                        addShape(contours.circles, viewGroup, drawCircle)
                     }
 
-                    if (view.contours.arcs) {
-                        addShape(view.contours.arcs, viewGroup, drawArc);
+                    if (contours.arcs) {
+                        addShape(contours.arcs, viewGroup, drawArc);
                     }
 
-                    if (view.contours.ellipses) {
-                        addShape(view.contours.ellipses, viewGroup, drawEllipse)
+                    if (contours.ellipses) {
+                        addShape(contours.ellipses, viewGroup, drawEllipse)
                     }
 
-                    if (view.contours.polylines) {
-                        addShape(view.contours.polylines, viewGroup, drawPolyline)
+                    if (contours.polylines) {
+                        addShape(contours.polylines, viewGroup, drawPolyline)
                     }
 
                     // Clear the fonts
@@ -198,11 +199,12 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
 
                 if (view.dimensions) {
                     view.dimensions.forEach(dimension => {
-                        if (dimension.contours.lines) {
-                            addShape(dimension.contours.lines, viewGroup, drawLine);
+                        let contours = dimension.contours;
+                        if (contours.lines) {
+                            addShape(contours.lines, viewGroup, drawLine);
                         }
-                        if (dimension.contours.solids) {
-                            addShape(dimension.contours.solids, viewGroup, drawSolid);
+                        if (contours.solids) {
+                            addShape(contours.solids, viewGroup, drawSolid);
                         }
                         if (dimension.texts) {
                             Object.entries(dimension.texts).forEach(textType => {
@@ -241,7 +243,7 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 newHeight = height;
             }
 
-            // // Center the camera
+            // Center the camera
             camera.position.set(centerX, centerY, camera.position.z);
 
             // Adjust the camera zoom to fit the bounding box
@@ -250,13 +252,23 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 renderer.domElement.clientHeight / newHeight
             );
 
-            controls.target = new THREE.Vector3(centerX, centerY, 5);
+            controls.target = new THREE.Vector3(centerX, centerY, 0);
 
             camera.zoom = zoomFactor;
             camera.updateProjectionMatrix();
 
             if (controls) {
                 controls.target.set(centerX, centerY, 0);
+
+                // Update panning and zoom limits
+                const panLimitBuffer = 100;
+                controls.panLimits = {
+                    min: new THREE.Vector3(boundingBox.min.x - panLimitBuffer, boundingBox.min.y - panLimitBuffer, 0),
+                    max: new THREE.Vector3(boundingBox.max.x + panLimitBuffer, boundingBox.max.y + panLimitBuffer, 0)
+                };
+                controls.minZoom = zoomFactor / 2; // Example: half of the fitted zoom
+                controls.maxZoom = zoomFactor * 4; // Example: double of the fitted zoom
+
                 controls.update();
             }
         };
