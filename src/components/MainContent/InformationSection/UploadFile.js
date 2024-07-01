@@ -3,7 +3,7 @@ import useFileUpload from '../../../hooks/UseFileUpload';
 import { useDispatch } from 'react-redux';
 import { setFiles, setSelectedFile } from '../../../slices/fileSlice';
 import { clearParsedData, setParsedData } from '../../../slices/parsedDataSlice';
-import { clearPage } from '../../../slices/pageDataSlice';
+import { clearPage, setReportCard } from '../../../slices/pageDataSlice';
 import './UploadFile.css';
 import useParsedData from '../../../hooks/UseParsedData';
 
@@ -25,6 +25,9 @@ const UploadFile = () => {
       fetchParsedData(file.path, (pageData) => {
         console.log('Dispatching parsed page data:', pageData);
         dispatch(setParsedData({ fileName: file.name, pageData }));
+      }, (reportCard) => {
+        console.log('Received report card:', reportCard);
+        dispatch(setReportCard(reportCard));
       });
     }
   });

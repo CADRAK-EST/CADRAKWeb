@@ -12,6 +12,12 @@
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --border-radius: 8px;
   --button-border-radius: 4px;
+  --button-background: #ff7f00;
+  --button-border: 1px solid #ff7f00;
+  --button-font-size: 1rem;
+  --button-padding: 8px 12px;
+  --button-hover-background: #e67300;
+  --input-border-color: #ccc;
 }
 
 body {
@@ -34,7 +40,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Buttons */
 button {
-  background-color: var(--secondary-color);
+  background-color: var(--button-background);
   font-family: var(--font-family);
   color: white;
   border: none;

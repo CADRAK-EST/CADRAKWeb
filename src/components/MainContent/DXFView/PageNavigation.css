@@ -1,0 +1,40 @@
+@import '../../../global.css';
+
+.page-navigation {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.page-navigation .nav-button {
+  background: var(--button-background);
+  border: var(--button-border);
+  font-size: var(--button-font-size);
+  cursor: pointer;
+  padding: var(--button-padding);
+  border-radius: var(--button-border-radius);
+  margin: 0 5px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.page-navigation .nav-button:hover {
+  background-color: var(--button-hover-background);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.page-navigation input {
+  width: 3rem;
+  text-align: center;
+  margin: 0 5px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 1rem;
+}

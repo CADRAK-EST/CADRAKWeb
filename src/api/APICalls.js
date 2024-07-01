@@ -1,4 +1,4 @@
-export const parseData = async (filePath, onNewPage) => {
+export const parseData = async (filePath, onNewPage, onReportCard) => {
   const response = await fetch('http://localhost:5000/parse', {
     method: 'POST',
     headers: {
@@ -27,9 +27,14 @@ export const parseData = async (filePath, onNewPage) => {
       buffer = buffer.slice(boundary + 1);
       if (chunk) {
         try {
-          const pageData = JSON.parse(chunk);
-          console.log('Parsed page data:', pageData);
-          onNewPage(pageData);
+          const data = JSON.parse(chunk);
+          if (Array.isArray(data)) {
+            console.log('Parsed report card:', data);
+            onReportCard(data);
+          } else {
+            console.log('Parsed page data:', data);
+            onNewPage(data);
+          }
         } catch (e) {
           console.error('Error parsing chunk:', chunk, e);
         }

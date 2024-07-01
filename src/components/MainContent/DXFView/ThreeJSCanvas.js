@@ -213,6 +213,8 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         }
 
         const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
+            if (!camera || !renderer) return;
+
             const width = boundingBox.max.x - boundingBox.min.x;
             const height = boundingBox.max.y - boundingBox.min.y;
 

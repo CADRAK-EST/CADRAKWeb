@@ -1,0 +1,31 @@
+.files-page {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.files-page h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.files-page ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.files-page li {
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  background: #f9f9f9;
+  cursor: pointer;
+}
+
+.files-page li:hover {
+  background: #f1f1f1;
+}

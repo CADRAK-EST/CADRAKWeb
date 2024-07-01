@@ -1,7 +1,7 @@
 @import '../../../global.css';
 
 .pages-list-section {
-  flex: 0 0 10%;
+  flex: 0 0 15%;
   padding: 1rem;
   overflow-y: auto;
   border: 1px solid var(--border-color);
@@ -9,6 +9,18 @@
   background-color: var(--background-color);
   box-shadow: var(--shadow);
   box-sizing: border-box;
+}
+
+.pages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.pages-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
 }
 
 .pages-list-section ul {
@@ -24,6 +36,7 @@
   box-shadow: var(--shadow);
   cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 0.5rem;
 }
 
 .pages-list-section li:hover {
@@ -34,4 +47,19 @@
 .pages-list-section p {
   padding: 0.5rem;
   color: #888;
+}
+
+.download-report-card-btn {
+  background-color: var(--button-background);
+  color: white;
+  border: var(--button-border);
+  border-radius: var(--button-border-radius);
+  padding: var(--button-padding);
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.download-report-card-btn:hover {
+  background-color: var(--button-hover-background);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

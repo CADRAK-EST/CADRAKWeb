@@ -1,13 +1,12 @@
 import React from 'react';
 import './Header.css';
 
-const Header = () => (
+const Header = ({ onFilesClick, onAboutClick }) => (
   <header className="header">
     <nav className="nav">
       <ul>
-        <li><a href="#viewer">Viewer</a></li>
-        <li><a href="#files">Files</a></li>
-        <li><a href="#about">About</a></li>
+        <li><button onClick={onFilesClick}>Files</button></li>
+        <li><button onClick={onAboutClick}>About</button></li>
       </ul>
     </nav>
   </header>
