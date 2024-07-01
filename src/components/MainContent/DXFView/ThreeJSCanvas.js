@@ -7,6 +7,7 @@ import { setPageLoaded } from '../../../slices/pageDataSlice';
 import { setupCameraControls } from './utils/cameraControls';
 import Highlight from './Highlight';
 import {
+    drawSolid,
     drawLine,
     drawCircle,
     drawArc,
@@ -122,14 +123,12 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
     useEffect(() => {
         console.log("I got called!")
         let viewGroups = scene.current.children.filter(child => child.name && child.name.startsWith('view-'));
-        viewGroups.forEach(viewGroup => { console.log("A view group: " + viewGroup); });
         // Clear old objects from scene
         viewGroups.forEach((viewGroup) => {
             if (!viewGroup.visible) {
                 scene.current.remove(viewGroup);
             }
         })
-        viewGroups.forEach(viewGroup => { console.log("Viewgroups now: " + viewGroup); });
 
         // // Add grid
         // const grid = createGrid();
@@ -191,6 +190,30 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                             });
                         }
                     });
+                    
+                }
+                // Log dimensions if they exist
+                if (view.dimensions) {
+                    view.dimensions.forEach(dimension => {
+                        console.log("Contours of dimension: ", dimension.contours);
+                        if (dimension.contours.lines) {
+                            dimension.contours.lines.forEach(dimensionLine => {
+                                const lineMesh = drawLine(scene.current, dimensionLine);
+                                lineMesh.userData = dimensionLine;
+                                viewGroup.add(lineMesh);
+                            });
+                        }
+                        if (dimension.contours.solids) {
+                            dimension.contours.solids.forEach(solid => {
+                                const solidMesh = drawSolid(scene.current, solid);
+                                solidMesh.userData = solid;
+                                viewGroup.add(solidMesh);
+                                console.log("Solid: ", solid);
+                            });
+                        }
+                    })
+                } else {
+                    console.log("No dimensions");
                 }
                 scene.current.add(viewGroup);
             }

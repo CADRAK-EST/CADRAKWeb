@@ -38,6 +38,26 @@ const createMaterial = (style, color, weight) => {
     return material;
 };
 
+// New drawSolid function
+export const drawSolid = (scene, solidData) => {
+    const material = createMaterial(solidData.style, solidData.colour, solidData.weight);
+
+    const shape = new THREE.Shape();
+    solidData.points.forEach((point, index) => {
+        if (index === 0) {
+            shape.moveTo(point.x, point.y);
+        } else {
+            shape.lineTo(point.x, point.y);
+        }
+    });
+
+    const geometry = new THREE.ShapeGeometry(shape);
+    const solid = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: hexColorFromArray(solidData.colour) }));
+
+    scene.add(solid);
+    return solid;
+};
+
 export const drawLine = (scene, lineData) => {
     const material = createMaterial(lineData.style, lineData.colour, lineData.weight);
     const points = [];
