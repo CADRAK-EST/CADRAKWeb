@@ -120,6 +120,29 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
         };
     }, [canvasRef, dispatch]);
 
+    const addShape = (shapeData, viewGroup, func) => {
+        shapeData.forEach(shape => {
+            const shapeMesh = func(scene.current, shape);
+            shapeMesh.userData = shape;
+            viewGroup.add(shapeMesh);
+        });
+    }
+
+    const addTextMesh = async (textData, viewGroup) => {
+        try {
+            const textMesh = await drawText(scene.current, textData);
+            if (textMesh.geometry instanceof TextGeometry) {
+                textMesh.userData = { isText: true };
+                scene.current.add(textMesh);
+                viewGroup.add(textMesh);
+            } else {
+                console.error('Invalid object type:', textMesh);
+            }
+        } catch (error) {
+            console.error('Error creating text mesh:', error);
+        }
+    }
+
     useEffect(() => {
         console.log("I got called!")
         let viewGroups = scene.current.children.filter(child => child.name && child.name.startsWith('view-'));
@@ -142,43 +165,23 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                 viewGroup.name = `view-${index}`;
                 if (view.contours) {
                     if (view.contours.lines) {
-                        view.contours.lines.forEach(line => {
-                            const lineMesh = drawLine(scene.current, line);
-                            lineMesh.userData = line;
-                            viewGroup.add(lineMesh);
-                        });
+                        addShape(view.contours.lines, viewGroup, drawLine);
                     }
 
                     if (view.contours.circles) {
-                        view.contours.circles.forEach(circle => {
-                            const circleMesh = drawCircle(scene.current, circle);
-                            circleMesh.userData = circle;
-                            viewGroup.add(circleMesh);
-                        });
+                        addShape(view.contours.circles, viewGroup, drawCircle)
                     }
 
                     if (view.contours.arcs) {
-                        view.contours.arcs.forEach(arc => {
-                            const arcMesh = drawArc(scene.current, arc);
-                            arcMesh.userData = arc;
-                            viewGroup.add(arcMesh);
-                        });
+                        addShape(view.contours.arcs, viewGroup, drawArc);
                     }
 
                     if (view.contours.ellipses) {
-                        view.contours.ellipses.forEach(ellipse => {
-                            const ellipseMesh = drawEllipse(scene.current, ellipse);
-                            ellipseMesh.userData = ellipse;
-                            viewGroup.add(ellipseMesh);
-                        });
+                        addShape(view.contours.ellipses, viewGroup, drawEllipse)
                     }
 
                     if (view.contours.polylines) {
-                        view.contours.polylines.forEach(polyline => {
-                            const polylineMesh = drawPolyline(scene.current, polyline);
-                            polylineMesh.userData = polyline;
-                            viewGroup.add(polylineMesh);
-                        });
+                        addShape(view.contours.polylines, viewGroup, drawPolyline)
                     }
 
                     // Clear the fonts
@@ -192,48 +195,32 @@ const ThreeJSCanvas = ({ canvasRef, views, visibility, texts, metadata = {}  }) 
                     });
                     
                 }
-                // Log dimensions if they exist
+
                 if (view.dimensions) {
                     view.dimensions.forEach(dimension => {
-                        console.log("Contours of dimension: ", dimension.contours);
                         if (dimension.contours.lines) {
-                            dimension.contours.lines.forEach(dimensionLine => {
-                                const lineMesh = drawLine(scene.current, dimensionLine);
-                                lineMesh.userData = dimensionLine;
-                                viewGroup.add(lineMesh);
-                            });
+                            addShape(dimension.contours.lines, viewGroup, drawLine);
                         }
                         if (dimension.contours.solids) {
-                            dimension.contours.solids.forEach(solid => {
-                                const solidMesh = drawSolid(scene.current, solid);
-                                solidMesh.userData = solid;
-                                viewGroup.add(solidMesh);
-                                console.log("Solid: ", solid);
+                            addShape(dimension.contours.solids, viewGroup, drawSolid);
+                        }
+                        if (dimension.texts) {
+                            Object.entries(dimension.texts).forEach(textType => {
+                                if (textType.length > 0 && textType[1].length > 0) {
+                                    textType.forEach(text => {
+                                            addTextMesh(text, viewGroup);
+                                    });
+                                } else {
+                                    console.log("textType is empty")
+                                }
                             });
                         }
                     })
-                } else {
-                    console.log("No dimensions");
                 }
                 scene.current.add(viewGroup);
             }
             viewGroup.visible = visibility[index];
         });
-        
-        const addTextMesh = async (textData, viewGroup) => {
-            try {
-                const textMesh = await drawText(scene.current, textData);
-                if (textMesh.geometry instanceof TextGeometry) {
-                    textMesh.userData = { isText: true };
-                    scene.current.add(textMesh);
-                    viewGroup.add(textMesh);
-                } else {
-                    console.error('Invalid object type:', textMesh);
-                }
-            } catch (error) {
-                console.error('Error creating text mesh:', error);
-            }
-        }
 
         const adjustCameraToBoundingBox = (boundingBox, camera, renderer) => {
             const width = boundingBox.max.x - boundingBox.min.x;
